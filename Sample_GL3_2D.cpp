@@ -13,13 +13,15 @@
 
 using namespace std;
 
-#define LASERRAYSPEED 20
+#define LASERRAYSPEED 10
 #define LASERGUNVELOCITY 6
 #define BUCKETSPEED 5
 #define BRICKHEIGHT 40
 #define BRICKWIDTH 20
 #define LASERWIDTH 5
 #define LASERHEIGHT 40
+#define MIRRORLENGTH 100
+
 struct VAO {
 	GLuint VertexArrayID;
 	GLuint VertexBuffer;
@@ -91,7 +93,7 @@ struct Sprite {
 	int isMovingAnim;
 	int dx;
 	int dy;
-	float weight;
+	float degreeRotation;
 };
 typedef struct Sprite Sprite;
 
@@ -104,7 +106,7 @@ map<string, Sprite> otherObjects;
 int windowWidth = 1200, windowHeight = 1200;
 int redBucketX = -windowWidth/4 - 40, greenBucketX = windowWidth/4 + 40;
 int GRAVITY = 2;
-float ctBrick, lutBrick, launchAngle;
+float ctBrick, lutBrick, launchAngle, ctReflection, lutReflection=0;
 int current_brick = 0;
 bool sKeyPressed = false, fKeyPressed = false;
 bool spaceKeyPressed = false;
@@ -385,30 +387,8 @@ void reshapeWindow (GLFWwindow* window, int width, int height)
 
 VAO *triangle, *rectangle;
 
-// Creates the triangle object used in this sample code
-void createTriangle ()
-{
-	/* ONLY vertices between the bounds specified in glm::ortho will be visible on screen */
-
-	/* Define vertex array as used in glBegin (GL_TRIANGLES) */
-	GLfloat vertex_buffer_data [] = {
-		0, 1,0, // vertex 0
-		-1,-1,0, // vertex 1
-		1,-1,0, // vertex 2
-	};
-
-	GLfloat color_buffer_data [] = {
-		1,0,0, // color 0
-		0,1,0, // color 1
-		0,0,1, // color 2
-	};
-
-	// create3DObject creates and returns a handle to a VAO that can be used later
-	triangle = create3DObject(GL_TRIANGLES, 3, vertex_buffer_data, color_buffer_data, GL_LINE);
-}
-
 // Creates the rectangle object used in this sample code
-void createRectangle (string name, float weight, COLOR colorA, COLOR colorB, COLOR colorC, COLOR colorD, float x, float y, float height, float width, string component)
+void createRectangle (string name, float degreeRotation, COLOR colorA, COLOR colorB, COLOR colorC, COLOR colorD, float x, float y, float height, float width, string component)
 {
 	// GL3 accepts only Triangles. Quads are not supported
 	float w=width/2,h=height/2;
@@ -451,7 +431,7 @@ void createRectangle (string name, float weight, COLOR colorA, COLOR colorB, COL
 	rectangleSprite.radius=(sqrt(height*height+width*width))/2;
 	rectangleSprite.friction=0.4;
 	rectangleSprite.health=100;
-	rectangleSprite.weight=weight;
+	rectangleSprite.degreeRotation=degreeRotation;
 	//All the different layers
 	if(component=="laser")
 		laserObjects[name]=rectangleSprite;
@@ -607,9 +587,33 @@ void detectCollision(void) {
 		else {
 			if((abs(x1 - x2) < (BRICKWIDTH + LASERWIDTH) / 2.0f) && (abs(y1 - y2) < (BRICKHEIGHT + LASERHEIGHT) / 2.0f))
 				brickObjects[i].status = 0;
+			}
 		}
+
+		for(map<string,Sprite>::iterator it = mirrorObjects.begin(); it != mirrorObjects.end(); it++) {
+			string current = it->first;
+			float angle = launchAngle;
+			float x2 = laserObjects["laserray"].x + LASERHEIGHT/2 * cos(angle * M_PI/180.0f);
+			float y2 = laserObjects["laserray"].y + LASERHEIGHT/2 * sin(angle * M_PI/180.0f);
+			float x3 = (x2 - mirrorObjects[current].x)/cos(mirrorObjects[current].degreeRotation * M_PI/180.0f);
+			float y3 = (y2 - mirrorObjects[current].y)/sin(mirrorObjects[current].degreeRotation * M_PI/180.0f);
+
+			//cout << current << endl;
+			//printf("%f %f, %f %f\n", x2, y2, x3, y3);
+			//printf("%f %f\n", x4, y4);
+			if((MIRRORLENGTH/2 >= x3) && (x3 >= -MIRRORLENGTH/2) && (MIRRORLENGTH/2 >= y3) && (y3 >= -MIRRORLENGTH/2))
+				{
+					// handle reflection
+					ctReflection = glfwGetTime();
+					if(ctReflection - lutReflection > 0.5) {
+					cout << mirrorObjects[current].degreeRotation << " " << launchAngle * 180.0f/M_PI << endl;
+					launchAngle = 2 * (mirrorObjects[current].degreeRotation) * M_PI/180.0f - launchAngle;
+					lutReflection = glfwGetTime();
+				}
+				}
+			}
 }
-}
+
 /* Render the scene with openGL */
 /* Edit this function according to your assignment */
 void draw (GLFWwindow* window )
@@ -714,17 +718,17 @@ GLFWwindow* initGLFW (int width, int height)
 /* Add all the models to be created here */
 void initGL (GLFWwindow* window, int width, int height)
 {
-	createRectangle("separator",100,white,white,white,white,0, -windowHeight/6,0.5,windowWidth,"other");
-	createRectangle("redBucket",100,red,red,red,red, -windowWidth/4 -40, -windowHeight/5 - 10,windowHeight/12,windowWidth/10,"bucket");
-	createRectangle("greenBucket",100,darkgreen,darkgreen,lightgreen,lightgreen, windowWidth/4 +40, -windowHeight/5 -10,windowHeight/12,windowWidth/10,"bucket");
-	createRectangle("laserbody",100,white,white,white,white,-410, 40, 40, 80,"laser");
-	createRectangle("lasergun",100,white,white,white,white,-380, 40, 25, 40, "laser");
-	createRectangle("laserbarrel",100,white,white,white,white, -365, 40, 5, 40, "laser");
-	createRectangle("laserray",100,red,red,red,red,laserObjects["laserbarrel"].x, laserObjects["laserbarrel"].y, LASERWIDTH, LASERHEIGHT, "laser");
-	createRectangle("mirrortopleft",100,skyblue2,skyblue2,skyblue2,skyblue2, -100, 250, 2, 100, "mirror");
-	createRectangle("mirrorbottomleft",100,skyblue2,skyblue2,skyblue2,skyblue2, -100, -150, 2, 100, "mirror");
-	createRectangle("mirrortopright",100,skyblue2,skyblue2,skyblue2,skyblue2, 325, 250, 2, 100, "mirror");
-	createRectangle("mirrorbottomright",100,skyblue2,skyblue2,skyblue2,skyblue2, 350, -150, 2, 100, "mirror");
+	createRectangle("separator",0,white,white,white,white,0, -windowHeight/6,0.5,windowWidth,"other");
+	createRectangle("redBucket",0,red,red,red,red, -windowWidth/4 -40, -windowHeight/5 - 10,windowHeight/12,windowWidth/10,"bucket");
+	createRectangle("greenBucket",0,darkgreen,darkgreen,lightgreen,lightgreen, windowWidth/4 +40, -windowHeight/5 -10,windowHeight/12,windowWidth/10,"bucket");
+	createRectangle("laserbody",0,white,white,white,white,-410, 40, 40, 80,"laser");
+	createRectangle("lasergun",0,white,white,white,white,-380, 40, 25, 40, "laser");
+	createRectangle("laserbarrel",0,white,white,white,white, -365, 40, 5, 40, "laser");
+	createRectangle("laserray",0,red,red,red,red,laserObjects["laserbarrel"].x, laserObjects["laserbarrel"].y, LASERWIDTH, LASERHEIGHT, "laser");
+	createRectangle("mirrortopleft",-30,skyblue2,skyblue2,skyblue2,skyblue2, -100, 250, 2, MIRRORLENGTH, "mirror");
+	createRectangle("mirrorbottomleft",-10,skyblue2,skyblue2,skyblue2,skyblue2, -100, -150, 2, MIRRORLENGTH, "mirror");
+	createRectangle("mirrortopright",-60,skyblue2,skyblue2,skyblue2,skyblue2, 325, 250, 2, MIRRORLENGTH, "mirror");
+	createRectangle("mirrorbottomright",45,skyblue2,skyblue2,skyblue2,skyblue2, 350, -150, 2, MIRRORLENGTH, "mirror");
 
 
 	COLOR brickcolor = red;
@@ -746,7 +750,6 @@ void initGL (GLFWwindow* window, int width, int height)
 	programID = LoadShaders( "Sample_GL.vert", "Sample_GL.frag" );
 	// Get a handle for our "MVP" uniform
 	Matrices.MatrixID = glGetUniformLocation(programID, "MVP");
-
 
 	reshapeWindow (window, width, height);
 
