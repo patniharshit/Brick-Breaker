@@ -200,7 +200,7 @@ void quit(GLFWwindow *window)
 {
 	glfwDestroyWindow(window);
 	glfwTerminate();
-	//    exit(EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 
@@ -674,7 +674,7 @@ GLFWwindow* initGLFW (int width, int height)
 
 	glfwSetErrorCallback(error_callback);
 	if (!glfwInit()) {
-		//        exit(EXIT_FAILURE);
+		 exit(EXIT_FAILURE);
 	}
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -686,7 +686,7 @@ GLFWwindow* initGLFW (int width, int height)
 
 	if (!window) {
 		glfwTerminate();
-		//        exit(EXIT_FAILURE);
+	  exit(EXIT_FAILURE);
 	}
 
 	glfwMakeContextCurrent(window);
@@ -796,5 +796,5 @@ int main (int argc, char** argv)
 	}
 
 	glfwTerminate();
-	//    exis(EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
