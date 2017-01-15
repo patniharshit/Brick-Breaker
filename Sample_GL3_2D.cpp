@@ -521,6 +521,19 @@ void iterateOnMap(map<string,Sprite> objectMap, glm::mat4 VP, GLFWwindow* window
 		if(spaceKeyPressed && current == "laserray") {
 				rotateGun = glm::rotate((float)(launchAngle), glm::vec3(0,0,1));
 		}
+		if(current == "mirrortopleft") {
+				rotateGun = glm::rotate((float)((-30)*(M_PI/180.0f)), glm::vec3(0,0,1));
+		}
+		if(current == "mirrortopright") {
+				rotateGun = glm::rotate((float)((-60)*(M_PI/180.0f)), glm::vec3(0,0,1));
+		}
+		if(current == "mirrorbottomleft") {
+				rotateGun = glm::rotate((float)((-10)*(M_PI/180.0f)), glm::vec3(0,0,1));
+		}
+		if(current == "mirrorbottomright") {
+				rotateGun = glm::rotate((float)((45)*(M_PI/180.0f)), glm::vec3(0,0,1));
+		}
+
 
 		ObjectTransform=translateObject * rotateGun;
 		Matrices.model *= ObjectTransform;
@@ -708,6 +721,11 @@ void initGL (GLFWwindow* window, int width, int height)
 	createRectangle("lasergun",100,white,white,white,white,-380, 40, 25, 40, "laser");
 	createRectangle("laserbarrel",100,white,white,white,white, -365, 40, 5, 40, "laser");
 	createRectangle("laserray",100,red,red,red,red,laserObjects["laserbarrel"].x, laserObjects["laserbarrel"].y, LASERWIDTH, LASERHEIGHT, "laser");
+	createRectangle("mirrortopleft",100,skyblue2,skyblue2,skyblue2,skyblue2, -100, 250, 2, 100, "mirror");
+	createRectangle("mirrorbottomleft",100,skyblue2,skyblue2,skyblue2,skyblue2, -100, -150, 2, 100, "mirror");
+	createRectangle("mirrortopright",100,skyblue2,skyblue2,skyblue2,skyblue2, 325, 250, 2, 100, "mirror");
+	createRectangle("mirrorbottomright",100,skyblue2,skyblue2,skyblue2,skyblue2, 350, -150, 2, 100, "mirror");
+
 
 	COLOR brickcolor = red;
 	for(int i =0; i < 1000; i++) {
