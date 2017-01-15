@@ -735,7 +735,10 @@ void initGL (GLFWwindow* window, int width, int height)
 			brickcolor = lightgreen;
 		else
 			brickcolor = skyblue1;
-		int randnum = rand() % 500 - 200;
+		int randnum = 1000;
+		while(randnum > 300 || (randnum > -160 && randnum < -40))
+				randnum = rand() % 700 - 325;
+
 		createRectangle("indivBrick",100,brickcolor,brickcolor,brickcolor,brickcolor, randnum, windowHeight/4, BRICKHEIGHT, BRICKWIDTH, "brick");
 	}
 
