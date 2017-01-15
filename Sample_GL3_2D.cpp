@@ -2,7 +2,7 @@
 #include <cmath>
 #include <fstream>
 #include <bits/stdc++.h>
-
+#include <time.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -97,16 +97,12 @@ map<string, Sprite> mirrorObjects;
 map<string, Sprite> bucketObjects;
 map<string, Sprite> otherObjects;
 
-int windowWidth = 1200;
-int windowHeight = 1200;
-int redBucketX = -windowWidth/4 - 40;
-int greenBucketX = windowWidth/4 + 40;
+int windowWidth = 1200, windowHeight = 1200;
+int redBucketX = -windowWidth/4 - 40, greenBucketX = windowWidth/4 + 40;
 int GRAVITY = 2;
-float ctBrick;
-float lutBrick;
+float ctBrick, lutBrick, launchAngle;
 int current_brick = 0;
-bool sKeyPressed = false;
-bool fKeyPressed = false;
+bool sKeyPressed = false, fKeyPressed = false;
 bool spaceKeyPressed = false;
 
 GLuint programID;
@@ -411,7 +407,6 @@ void createRectangle (string name, float weight, COLOR colorA, COLOR colorB, COL
 {
 	// GL3 accepts only Triangles. Quads are not supported
 	float w=width/2,h=height/2;
-	cout << w << " " << h << endl;
 	GLfloat vertex_buffer_data [] = {
 		-w,-h,0, // vertex 1
 		-w,h,0, // vertex 2
@@ -511,9 +506,17 @@ void iterateOnMap(map<string,Sprite> objectMap, glm::mat4 VP, GLFWwindow* window
 		glm::mat4 rotateGun;
 		double mouse_x, mouse_y;
 		glfwGetCursorPos(window,&mouse_x,&mouse_y);
-		if(current == "laserbarrel" || current == "laserray") {
-			rotateGun = glm::rotate((float)((30)*M_PI/180.0f), glm::vec3(0,0,1));  // rotate about vector (1,0,0)
+		float angle = -(atan((mouse_y-400)/(mouse_x)));
+		if(current == "laserbarrel") {
+			rotateGun = glm::rotate((float)(angle), glm::vec3(0,0,1));  // rotate about vector (1,0,0)
 		}
+		if((current == "laserray") && (laserObjects["laserray"].x == laserObjects["laserbarrel"].x))
+			launchAngle = angle;
+
+		if(spaceKeyPressed && current == "laserray") {
+				rotateGun = glm::rotate((float)(launchAngle), glm::vec3(0,0,1));
+		}
+
 		ObjectTransform=translateObject * rotateGun;
 		Matrices.model *= ObjectTransform;
 		MVP = VP * Matrices.model; // MVP = p * V * M
@@ -616,10 +619,12 @@ void draw (GLFWwindow* window )
 	keyPressed(VP);
 
 	if(spaceKeyPressed) {
-		laserObjects["laserray"].x += LASERRAYSPEED;
-		laserObjects["laserray"].y += tan(30 * (M_PI/180.0f)) * LASERRAYSPEED;
+		laserObjects["laserray"].x += cos(launchAngle) * LASERRAYSPEED;
+		laserObjects["laserray"].y += sin(launchAngle) * LASERRAYSPEED;
 	}
-	if(laserObjects["laserray"].x > windowWidth/2) {
+	int posx = laserObjects["laserray"].x;
+	int posy = laserObjects["laserray"].y;
+	if(posx > windowWidth/2 || posy > windowHeight/2 || posx < -windowWidth/2 || posy < -windowHeight/2) {
 		spaceKeyPressed = false;
 		laserObjects["laserray"].x = laserObjects["laserbarrel"].x;
 		laserObjects["laserray"].y = laserObjects["laserbarrel"].y;
@@ -727,6 +732,7 @@ void initGL (GLFWwindow* window, int width, int height)
 
 int main (int argc, char** argv)
 {
+	srand(time(NULL));
 	GLFWwindow* window = initGLFW(windowWidth, windowHeight);
 
 	initGL (window, windowWidth, windowHeight);
