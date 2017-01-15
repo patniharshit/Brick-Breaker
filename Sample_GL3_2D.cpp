@@ -15,7 +15,11 @@ using namespace std;
 
 #define LASERRAYSPEED 20
 #define LASERGUNVELOCITY 6
-
+#define BUCKETSPEED 5
+#define BRICKHEIGHT 40
+#define BRICKWIDTH 20
+#define LASERWIDTH 5
+#define LASERHEIGHT 40
 struct VAO {
 	GLuint VertexArrayID;
 	GLuint VertexBuffer;
@@ -104,6 +108,7 @@ float ctBrick, lutBrick, launchAngle;
 int current_brick = 0;
 bool sKeyPressed = false, fKeyPressed = false;
 bool spaceKeyPressed = false;
+float camera_rotation_angle = 90;
 
 GLuint programID;
 
@@ -576,10 +581,27 @@ void iterateOnBrickObjects(vector<Sprite> objectMap, glm::mat4 VP)
 	}
 }
 
-float camera_rotation_angle = 90;
-float rectangle_rotation = 0;
-float triangle_rotation = 0;
+float distance(float x1, float y1, float x2, float y2) {
+	return sqrt(((x1 - x2)*(x1 - x2)) + ((y1 - y2)*(y1 - y2)));
+}
 
+void detectCollision(void) {
+	float x1 = laserObjects["laserray"].x;
+	float y1 = laserObjects["laserray"].y;
+
+	for(int i=0; i<brickObjects.size(); i++) {
+		float x2 = brickObjects[i].x;
+		float y2 = brickObjects[i].y;
+
+		float dis = distance(x1,y1,x2,y2);
+		if(brickObjects[i].status==0)
+			continue;
+		else {
+			if((dis < (BRICKWIDTH + LASERWIDTH + 15) / 2.0f) && (dis < (BRICKHEIGHT + LASERHEIGHT +15) / 2.0f))
+				brickObjects[i].status = 0;
+		}
+}
+}
 /* Render the scene with openGL */
 /* Edit this function according to your assignment */
 void draw (GLFWwindow* window )
@@ -629,12 +651,7 @@ void draw (GLFWwindow* window )
 		laserObjects["laserray"].x = laserObjects["laserbarrel"].x;
 		laserObjects["laserray"].y = laserObjects["laserbarrel"].y;
 	}
-	// Increment angles
-	float increments = 1;
-
-	//camera_rotation_angle++; // Simulating camera rotation
-	//triangle_rotation = triangle_rotation + increments*triangle_rot_dir*triangle_rot_status;
-	//rectangle_rotation = rectangle_rotation + increments*rectangle_rot_dir*rectangle_rot_status;
+	detectCollision();
 }
 
 /* Initialise glfw window, I/O callbacks and the renderer to use */
@@ -695,7 +712,7 @@ void initGL (GLFWwindow* window, int width, int height)
 	createRectangle("laserbody",100,white,white,white,white,-410, 40, 40, 80,"laser");
 	createRectangle("lasergun",100,white,white,white,white,-380, 40, 25, 40, "laser");
 	createRectangle("laserbarrel",100,white,white,white,white, -365, 40, 5, 40, "laser");
-	createRectangle("laserray",100,red,red,red,red,laserObjects["laserbarrel"].x, laserObjects["laserbarrel"].y, 5, 40, "laser");
+	createRectangle("laserray",100,red,red,red,red,laserObjects["laserbarrel"].x, laserObjects["laserbarrel"].y, LASERWIDTH, LASERHEIGHT, "laser");
 
 	COLOR brickcolor = red;
 	for(int i =0; i < 1000; i++) {
@@ -706,7 +723,7 @@ void initGL (GLFWwindow* window, int width, int height)
 		else
 			brickcolor = skyblue1;
 		int randnum = rand() % 500 - 200;
-		createRectangle("indivBrick",100,brickcolor,brickcolor,brickcolor,brickcolor, randnum, windowHeight/4, 30, 20, "brick");
+		createRectangle("indivBrick",100,brickcolor,brickcolor,brickcolor,brickcolor, randnum, windowHeight/4, BRICKHEIGHT, BRICKWIDTH, "brick");
 	}
 
 	// Create and compile our GLSL program from the shaders
