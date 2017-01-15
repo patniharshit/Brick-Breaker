@@ -581,10 +581,6 @@ void iterateOnBrickObjects(vector<Sprite> objectMap, glm::mat4 VP)
 	}
 }
 
-float distance(float x1, float y1, float x2, float y2) {
-	return sqrt(((x1 - x2)*(x1 - x2)) + ((y1 - y2)*(y1 - y2)));
-}
-
 void detectCollision(void) {
 	float x1 = laserObjects["laserray"].x;
 	float y1 = laserObjects["laserray"].y;
@@ -593,11 +589,10 @@ void detectCollision(void) {
 		float x2 = brickObjects[i].x;
 		float y2 = brickObjects[i].y;
 
-		float dis = distance(x1,y1,x2,y2);
 		if(brickObjects[i].status==0)
 			continue;
 		else {
-			if((dis < (BRICKWIDTH + LASERWIDTH + 15) / 2.0f) && (dis < (BRICKHEIGHT + LASERHEIGHT +15) / 2.0f))
+			if((abs(x1 - x2) < (BRICKWIDTH + LASERWIDTH) / 2.0f) && (abs(y1 - y2) < (BRICKHEIGHT + LASERHEIGHT) / 2.0f))
 				brickObjects[i].status = 0;
 		}
 }
