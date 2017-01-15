@@ -598,15 +598,11 @@ void detectCollision(void) {
 			float x3 = (x2 - mirrorObjects[current].x)/cos(mirrorObjects[current].degreeRotation * M_PI/180.0f);
 			float y3 = (y2 - mirrorObjects[current].y)/sin(mirrorObjects[current].degreeRotation * M_PI/180.0f);
 
-			//cout << current << endl;
-			//printf("%f %f, %f %f\n", x2, y2, x3, y3);
-			//printf("%f %f\n", x4, y4);
 			if((MIRRORLENGTH/2 >= x3) && (x3 >= -MIRRORLENGTH/2) && (MIRRORLENGTH/2 >= y3) && (y3 >= -MIRRORLENGTH/2))
 				{
 					// handle reflection
 					ctReflection = glfwGetTime();
 					if(ctReflection - lutReflection > 0.5) {
-					cout << mirrorObjects[current].degreeRotation << " " << launchAngle * 180.0f/M_PI << endl;
 					launchAngle = 2 * (mirrorObjects[current].degreeRotation) * M_PI/180.0f - launchAngle;
 					lutReflection = glfwGetTime();
 				}
