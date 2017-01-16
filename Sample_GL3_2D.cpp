@@ -114,6 +114,12 @@ bool gameOver = false;
 int score = 0;
 int numRedGreenHits = 0;
 int tolerableRedGreenHits = 10;
+float x_change = 0; //For the camera pan
+float y_change = 0; //For the camera pan
+double new_mouse_pos_x, new_mouse_pos_y;
+float zoom_camera = 1;
+double mouse_pos_x, mouse_pos_y;
+int right_mouse_clicked=0;
 
 GLuint programID;
 
@@ -206,6 +212,42 @@ void quit(GLFWwindow *window)
 	exit(EXIT_SUCCESS);
 }
 
+void mousescroll(GLFWwindow* window, double xoffset, double yoffset)
+{
+	if (yoffset==-1) {
+		zoom_camera /= 1.1; //make it bigger than current size
+	}
+	else if(yoffset==1){
+		zoom_camera *= 1.1; //make it bigger than current size
+	}
+	if (zoom_camera<=1) {
+		zoom_camera = 1;
+	}
+	if (zoom_camera>=4) {
+		zoom_camera=4;
+	}
+	if(x_change-400.0f/zoom_camera<-400)
+		x_change=-400+400.0f/zoom_camera;
+	else if(x_change+400.0f/zoom_camera>400)
+		x_change=400-400.0f/zoom_camera;
+	if(y_change-300.0f/zoom_camera<-300)
+		y_change=-300+300.0f/zoom_camera;
+	else if(y_change+300.0f/zoom_camera>300)
+		y_change=300-300.0f/zoom_camera;
+	Matrices.projection = glm::ortho((float)(-400.0f/zoom_camera+x_change), (float)(400.0f/zoom_camera+x_change), (float)(-300.0f/zoom_camera+y_change), (float)(300.0f/zoom_camera+y_change), 0.1f, 500.0f);
+}
+
+//Ensure the panning does not go out of the map
+void check_pan(){
+	if(x_change-400.0f/zoom_camera<-400)
+		x_change=-400+400.0f/zoom_camera;
+	else if(x_change+400.0f/zoom_camera>400)
+		x_change=400-400.0f/zoom_camera;
+	if(y_change-300.0f/zoom_camera<-300)
+		y_change=-300+300.0f/zoom_camera;
+	else if(y_change+300.0f/zoom_camera>300)
+		y_change=300-300.0f/zoom_camera;
+}
 
 /* Generate VAO, VBOs and return VAO handle */
 struct VAO* create3DObject (GLenum primitive_mode, int numVertices, const GLfloat* vertex_buffer_data, const GLfloat* color_buffer_data, GLenum fill_mode=GL_FILL)
@@ -300,6 +342,32 @@ void keyboard (GLFWwindow* window, int key, int scancode, int action, int mods)
 
 	if (action == GLFW_RELEASE) {
 		switch (key) {
+		case GLFW_KEY_UP:
+			mousescroll(window,0,+1);
+			check_pan();
+			break;
+		case GLFW_KEY_DOWN:
+			mousescroll(window,0,-1);
+			check_pan();
+			break;
+		case GLFW_KEY_RIGHT:
+			x_change+=10;
+			check_pan();
+			rightKeyPressed = false;
+			break;
+		case GLFW_KEY_LEFT:
+			x_change-=10;
+			check_pan();
+			leftKeyPressed = false;
+			break;
+		case GLFW_KEY_O:
+			y_change+=10;
+			check_pan();
+			break;
+		case GLFW_KEY_I:
+			y_change-=10;
+			check_pan();
+			break;
 			case GLFW_KEY_S:
 				sKeyPressed = false;
 				break;
@@ -317,12 +385,6 @@ void keyboard (GLFWwindow* window, int key, int scancode, int action, int mods)
 				break;
 			case GLFW_KEY_RIGHT_CONTROL:
 				ctrlKeyPressed = false;
-				break;
-			case GLFW_KEY_LEFT:
-				leftKeyPressed = false;
-				break;
-			case GLFW_KEY_RIGHT:
-				rightKeyPressed = false;
 				break;
 			case GLFW_KEY_SPACE:
 				spaceKeyPressed = true;
@@ -395,7 +457,11 @@ void mouseButton (GLFWwindow* window, int button, int action, int mods)
 			}
 			break;
 		case GLFW_MOUSE_BUTTON_RIGHT:
+			if (action == GLFW_PRESS) {
+				right_mouse_clicked=1;
+			}
 			if (action == GLFW_RELEASE) {
+				right_mouse_clicked=0;
 			}
 			break;
 		default:
@@ -427,7 +493,7 @@ void reshapeWindow (GLFWwindow* window, int width, int height)
 	// Matrices.projection = glm::perspective (fov, (GLfloat) fbwidth / (GLfloat) fbheight, 0.1f, 500.0f);
 
 	// Ortho projection for 2D views
-	Matrices.projection = glm::ortho(-400.0f, 400.0f, -300.0f,300.0f, 0.1f, 500.0f);
+	Matrices.projection = glm::ortho(-400.0f/zoom_camera, 400.0f/zoom_camera, -300.0f/zoom_camera, 300.0f/zoom_camera, 0.1f, 500.0f);
 }
 
 VAO *triangle, *rectangle;
@@ -727,6 +793,15 @@ void draw (GLFWwindow* window )
 
 	// Compute ViewProject matrix as view/camera might not be changed for this frame (basic scenario)
 	//  Don't change unless you are sure!!
+	glfwGetCursorPos(window, &new_mouse_pos_x, &new_mouse_pos_y);
+	if(right_mouse_clicked==1){
+		x_change+=new_mouse_pos_x-mouse_pos_x;
+		y_change-=new_mouse_pos_y-mouse_pos_y;
+		check_pan();
+	}
+	Matrices.projection = glm::ortho((float)(-400.0f/zoom_camera+x_change), (float)(400.0f/zoom_camera+x_change), (float)(-300.0f/zoom_camera+y_change), (float)(300.0f/zoom_camera+y_change), 0.1f, 500.0f);
+	glfwGetCursorPos(window, &mouse_pos_x, &mouse_pos_y);
+	
 	glm::mat4 VP = Matrices.projection * Matrices.view;
 
 	// Send our transformation to the currently bound shader, in the "MVP" uniform
@@ -810,6 +885,7 @@ GLFWwindow* initGLFW (int width, int height)
 
 	/* Register function to handle mouse click */
 	glfwSetMouseButtonCallback(window, mouseButton);  // mouse button clicks
+	glfwSetScrollCallback(window, mousescroll); // mouse scroll
 
 	return window;
 }
@@ -875,6 +951,7 @@ int main (int argc, char** argv)
 
 	double last_update_time = glfwGetTime(), current_time;
 
+	glfwGetCursorPos(window, &mouse_pos_x, &mouse_pos_y);
 	/* Draw in loop */
 	while (!glfwWindowShouldClose(window)) {
 
