@@ -71,7 +71,6 @@ COLOR cloudwhite1 = {204/255.0,255/255.0,255/255.0};
 COLOR lightpink = {255/255.0,122/255.0,173/255.0};
 COLOR darkpink = {255/255.0,51/255.0,119/255.0};
 COLOR white = {255/255.0,255/255.0,255/255.0};
-COLOR score = {117/255.0,78/255.0,40/255.0};
 
 struct Sprite {
 	string name;
@@ -111,6 +110,8 @@ int current_brick = 0;
 bool sKeyPressed = false, fKeyPressed = false, altKeyPressed = false, ctrlKeyPressed = false, leftKeyPressed = false, rightKeyPressed = false;
 bool spaceKeyPressed = false;
 float camera_rotation_angle = 90;
+bool gameOver = false;
+int score = 0;
 
 GLuint programID;
 
@@ -610,6 +611,13 @@ void iterateOnBrickObjects(vector<Sprite> objectMap, glm::mat4 VP)
 	}
 }
 
+bool matchColor(COLOR A, COLOR B) {
+			if(A.r == B.r && A.g == B.g && A.b == B.b)
+					return true;
+			else
+					return false;
+}
+
 void detectCollision(void) {
 	float x1 = laserObjects["laserray"].x;
 	float y1 = laserObjects["laserray"].y;
@@ -639,9 +647,41 @@ void detectCollision(void) {
 					// handle reflection
 					ctReflection = glfwGetTime();
 					if(ctReflection - lutReflection > 0.5) {
-					launchAngle = 2 * (mirrorObjects[current].degreeRotation) * M_PI/180.0f - launchAngle;
-					lutReflection = glfwGetTime();
+							launchAngle = 2 * (mirrorObjects[current].degreeRotation) * M_PI/180.0f - launchAngle;
+							lutReflection = glfwGetTime();
 				}
+				}
+			}
+
+			for(int i=0; i<brickObjects.size(); i++) {
+				float x2 = brickObjects[i].x;
+				float y2 = brickObjects[i].y;
+
+				if(brickObjects[i].status==0)
+					continue;
+				else {
+					if(abs(bucketObjects["redBucket"].x-bucketObjects["greenBucket"].x) >= windowWidth / 10) {
+						if(matchColor(brickObjects[i].color,red)) {
+								if((x2 >= bucketObjects["redBucket"].x - windowWidth/10) && (x2 <= bucketObjects["redBucket"].x + windowWidth/10) && y2 <= -windowWidth/12) {
+										score++;
+										brickObjects[i].status = 0;
+									}
+						}
+						else if(matchColor(brickObjects[i].color,lightgreen)) {
+								if((x2 >= bucketObjects["greenBucket"].x - windowWidth/10) && (x2 <= bucketObjects["greenBucket"].x + windowWidth/10) && y2 <= -windowWidth/12) {
+										score++;
+										brickObjects[i].status = 0;
+									}
+						}
+						else if(matchColor(brickObjects[i].color,skyblue1)) {
+								if((x2 >= bucketObjects["redBucket"].x - windowWidth/10) && (x2 <= bucketObjects["redBucket"].x + windowWidth/10) && y2 <= -windowWidth/12) {
+										gameOver = true;
+								}
+								else if((x2 >= bucketObjects["greenBucket"].x - windowWidth/10) && (x2 <= bucketObjects["greenBucket"].x + windowWidth/10) && y2 <= -windowWidth/12) {
+									gameOver = true;
+								}
+						}
+					}
 				}
 			}
 }
