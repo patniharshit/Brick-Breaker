@@ -631,6 +631,10 @@ void detectCollision(void) {
 		else {
 			if((abs(x1 - x2) < (BRICKWIDTH + LASERWIDTH) / 2.0f) && (abs(y1 - y2) < (BRICKHEIGHT + LASERHEIGHT) / 2.0f))
 				brickObjects[i].status = 0;
+				if(matchColor(brickObjects[i].color,skyblue1))
+					score++;
+				else
+					score--;
 			}
 		}
 
