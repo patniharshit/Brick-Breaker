@@ -838,7 +838,7 @@ void draw (GLFWwindow* window )
 	}
 	int posx = laserObjects["laserray"].x;
 	int posy = laserObjects["laserray"].y;
-	if(posx > windowWidth/2 || posy > windowHeight/2 || posx < -windowWidth/2 || posy < -windowHeight/2) {
+	if(posx > windowWidth/2 || posy > 300 || posx < -windowWidth/2 || posy < -windowHeight/2) {
 		spaceKeyPressed = false;
 		laserObjects["laserray"].x = laserObjects["laserbarrel"].x;
 		laserObjects["laserray"].y = laserObjects["laserbarrel"].y;
@@ -924,7 +924,7 @@ void initGL (GLFWwindow* window, int width, int height)
 		while(randnum > 300 || (randnum > -160 && randnum < -40))
 			randnum = rand() % 700 - 325;
 
-		createRectangle("indivBrick",100,brickcolor,brickcolor,brickcolor,brickcolor, randnum, windowHeight/4, BRICKHEIGHT, BRICKWIDTH, "brick");
+		createRectangle("indivBrick",100,brickcolor,brickcolor,brickcolor,brickcolor, randnum, windowHeight/3, BRICKHEIGHT, BRICKWIDTH, "brick");
 	}
 
 	// Create and compile our GLSL program from the shaders
