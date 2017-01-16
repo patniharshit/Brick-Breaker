@@ -112,6 +112,8 @@ bool spaceKeyPressed = false;
 float camera_rotation_angle = 90;
 bool gameOver = false;
 int score = 0;
+int numRedGreenHits = 0;
+int tolerableRedGreenHits = 10;
 
 GLuint programID;
 
@@ -629,12 +631,16 @@ void detectCollision(void) {
 		if(brickObjects[i].status==0)
 			continue;
 		else {
+			if(tolerableRedGreenHits < numRedGreenHits)
+					gameOver = true;
 			if((abs(x1 - x2) < (BRICKWIDTH + LASERWIDTH) / 2.0f) && (abs(y1 - y2) < (BRICKHEIGHT + LASERHEIGHT) / 2.0f))
 				brickObjects[i].status = 0;
 				if(matchColor(brickObjects[i].color,skyblue1))
 					score++;
-				else
+				else {
 					score--;
+					numRedGreenHits++;
+				}
 			}
 		}
 
