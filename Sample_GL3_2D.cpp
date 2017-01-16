@@ -602,6 +602,7 @@ void iterateOnMap(map<string,Sprite> objectMap, glm::mat4 VP, GLFWwindow* window
 		glm::mat4 rotateGun;
 		double mouse_x, mouse_y;
 		glfwGetCursorPos(window,&mouse_x,&mouse_y);
+		//printf("%f %f\n", mouse_x-600, 400-mouse_y);
 		float angle = -(atan((mouse_y-400)/(mouse_x)));
 		if(current == "laserbarrel") {
 			rotateGun = glm::rotate((float)(angle), glm::vec3(0,0,1));  // rotate about vector (1,0,0)
@@ -707,10 +708,13 @@ void detectCollision(void) {
 				gameOver = true;
 			if((abs(x1 - x2) < (BRICKWIDTH + LASERWIDTH) / 2.0f) && (abs(y1 - y2) < (BRICKHEIGHT + LASERHEIGHT) / 2.0f)) {
 				brickObjects[i].status = 0;
-				if(matchColor(brickObjects[i].color,skyblue1))
+				if(matchColor(brickObjects[i].color,skyblue1)) {
 						score++;
+						cout << "Score: " << score << endl;
+				}
 				else {
 						score--;
+						cout << "Score: " << score << endl;
 						numRedGreenHits++;
 				}
 		}
@@ -747,12 +751,14 @@ void detectCollision(void) {
 				if(matchColor(brickObjects[i].color,red)) {
 					if((x2 >= bucketObjects["redBucket"].x - windowWidth/16) && (x2 <= bucketObjects["redBucket"].x + windowWidth/16) && y2 <= -windowWidth/7) {
 						score++;
+						cout << "Score: " << score << endl;
 						brickObjects[i].status = 0;
 					}
 				}
 				else if(matchColor(brickObjects[i].color,lightgreen)) {
 					if((x2 >= bucketObjects["greenBucket"].x - windowWidth/16) && (x2 <= bucketObjects["greenBucket"].x + windowWidth/16) && y2 <= -windowWidth/7) {
 						score++;
+						cout << "Score: " << score << endl;
 						brickObjects[i].status = 0;
 					}
 				}
