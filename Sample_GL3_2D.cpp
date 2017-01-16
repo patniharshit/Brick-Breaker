@@ -105,7 +105,7 @@ map<string, Sprite> otherObjects;
 int windowWidth = 1200, windowHeight = 1200;
 int redBucketX = -windowWidth/4 - 40, greenBucketX = windowWidth/4 + 40;
 int GRAVITY = 2;
-float ctBrick, lutBrick, launchAngle, ctReflection, lutReflection=0;
+float ctBrick, lutBrick, launchAngle, ctReflection, lutReflection=0, ctReload, lutReload=0;
 int current_brick = 0;
 bool sKeyPressed = false, fKeyPressed = false, altKeyPressed = false, ctrlKeyPressed = false, leftKeyPressed = false, rightKeyPressed = false;
 bool spaceKeyPressed = false;
@@ -309,23 +309,29 @@ void keyboard (GLFWwindow* window, int key, int scancode, int action, int mods)
 			case GLFW_KEY_LEFT_ALT:
 				altKeyPressed = false;
 				break;
-				case GLFW_KEY_RIGHT_ALT:
-					altKeyPressed = false;
-					break;
-				case GLFW_KEY_LEFT_CONTROL:
-					ctrlKeyPressed = false;
-					break;
-				case GLFW_KEY_RIGHT_CONTROL:
-					ctrlKeyPressed = false;
-					break;
-				case GLFW_KEY_LEFT:
-					leftKeyPressed = false;
-					break;
-				case GLFW_KEY_RIGHT:
-					rightKeyPressed = false;
-					break;
+			case GLFW_KEY_RIGHT_ALT:
+				altKeyPressed = false;
+				break;
+			case GLFW_KEY_LEFT_CONTROL:
+				ctrlKeyPressed = false;
+				break;
+			case GLFW_KEY_RIGHT_CONTROL:
+				ctrlKeyPressed = false;
+				break;
+			case GLFW_KEY_LEFT:
+				leftKeyPressed = false;
+				break;
+			case GLFW_KEY_RIGHT:
+				rightKeyPressed = false;
+				break;
 			case GLFW_KEY_SPACE:
 				spaceKeyPressed = true;
+				break;
+			case GLFW_KEY_N:
+				GRAVITY--;
+				break;
+			case GLFW_KEY_M:
+				GRAVITY++;
 				break;
 			default:
 				break;
@@ -538,19 +544,19 @@ void iterateOnMap(map<string,Sprite> objectMap, glm::mat4 VP, GLFWwindow* window
 			launchAngle = angle;
 
 		if(spaceKeyPressed && current == "laserray") {
-				rotateGun = glm::rotate((float)(launchAngle), glm::vec3(0,0,1));
+			rotateGun = glm::rotate((float)(launchAngle), glm::vec3(0,0,1));
 		}
 		if(current == "mirrortopleft") {
-				rotateGun = glm::rotate((float)((-30)*(M_PI/180.0f)), glm::vec3(0,0,1));
+			rotateGun = glm::rotate((float)((-30)*(M_PI/180.0f)), glm::vec3(0,0,1));
 		}
 		if(current == "mirrortopright") {
-				rotateGun = glm::rotate((float)((-60)*(M_PI/180.0f)), glm::vec3(0,0,1));
+			rotateGun = glm::rotate((float)((-60)*(M_PI/180.0f)), glm::vec3(0,0,1));
 		}
 		if(current == "mirrorbottomleft") {
-				rotateGun = glm::rotate((float)((-10)*(M_PI/180.0f)), glm::vec3(0,0,1));
+			rotateGun = glm::rotate((float)((-10)*(M_PI/180.0f)), glm::vec3(0,0,1));
 		}
 		if(current == "mirrorbottomright") {
-				rotateGun = glm::rotate((float)((45)*(M_PI/180.0f)), glm::vec3(0,0,1));
+			rotateGun = glm::rotate((float)((45)*(M_PI/180.0f)), glm::vec3(0,0,1));
 		}
 
 
@@ -614,10 +620,10 @@ void iterateOnBrickObjects(vector<Sprite> objectMap, glm::mat4 VP)
 }
 
 bool matchColor(COLOR A, COLOR B) {
-			if(A.r == B.r && A.g == B.g && A.b == B.b)
-					return true;
-			else
-					return false;
+	if(A.r == B.r && A.g == B.g && A.b == B.b)
+		return true;
+	else
+		return false;
 }
 
 void detectCollision(void) {
@@ -632,68 +638,68 @@ void detectCollision(void) {
 			continue;
 		else {
 			if(tolerableRedGreenHits < numRedGreenHits)
-					gameOver = true;
+				gameOver = true;
 			if((abs(x1 - x2) < (BRICKWIDTH + LASERWIDTH) / 2.0f) && (abs(y1 - y2) < (BRICKHEIGHT + LASERHEIGHT) / 2.0f))
 				brickObjects[i].status = 0;
-				if(matchColor(brickObjects[i].color,skyblue1))
-					score++;
-				else {
-					score--;
-					numRedGreenHits++;
-				}
+			if(matchColor(brickObjects[i].color,skyblue1))
+				score++;
+			else {
+				score--;
+				numRedGreenHits++;
 			}
 		}
+	}
 
-		for(map<string,Sprite>::iterator it = mirrorObjects.begin(); it != mirrorObjects.end(); it++) {
-			string current = it->first;
-			float angle = launchAngle;
-			float x2 = laserObjects["laserray"].x + LASERHEIGHT/2 * cos(angle * M_PI/180.0f);
-			float y2 = laserObjects["laserray"].y + LASERHEIGHT/2 * sin(angle * M_PI/180.0f);
-			float x3 = (x2 - mirrorObjects[current].x)/cos(mirrorObjects[current].degreeRotation * M_PI/180.0f);
-			float y3 = (y2 - mirrorObjects[current].y)/sin(mirrorObjects[current].degreeRotation * M_PI/180.0f);
+	for(map<string,Sprite>::iterator it = mirrorObjects.begin(); it != mirrorObjects.end(); it++) {
+		string current = it->first;
+		float angle = launchAngle;
+		float x2 = laserObjects["laserray"].x + LASERHEIGHT/2 * cos(angle * M_PI/180.0f);
+		float y2 = laserObjects["laserray"].y + LASERHEIGHT/2 * sin(angle * M_PI/180.0f);
+		float x3 = (x2 - mirrorObjects[current].x)/cos(mirrorObjects[current].degreeRotation * M_PI/180.0f);
+		float y3 = (y2 - mirrorObjects[current].y)/sin(mirrorObjects[current].degreeRotation * M_PI/180.0f);
 
-			if((MIRRORLENGTH/2 >= x3) && (x3 >= -MIRRORLENGTH/2) && (MIRRORLENGTH/2 >= y3) && (y3 >= -MIRRORLENGTH/2))
-				{
-					// handle reflection
-					ctReflection = glfwGetTime();
-					if(ctReflection - lutReflection > 0.5) {
-							launchAngle = 2 * (mirrorObjects[current].degreeRotation) * M_PI/180.0f - launchAngle;
-							lutReflection = glfwGetTime();
-				}
-				}
+		if((MIRRORLENGTH/2 >= x3) && (x3 >= -MIRRORLENGTH/2) && (MIRRORLENGTH/2 >= y3) && (y3 >= -MIRRORLENGTH/2))
+		{
+			// handle reflection
+			ctReflection = glfwGetTime();
+			if(ctReflection - lutReflection > 0.5) {
+				launchAngle = 2 * (mirrorObjects[current].degreeRotation) * M_PI/180.0f - launchAngle;
+				lutReflection = glfwGetTime();
 			}
+		}
+	}
 
-			for(int i=0; i<brickObjects.size(); i++) {
-				float x2 = brickObjects[i].x;
-				float y2 = brickObjects[i].y;
+	for(int i=0; i<brickObjects.size(); i++) {
+		float x2 = brickObjects[i].x;
+		float y2 = brickObjects[i].y;
 
-				if(brickObjects[i].status==0)
-					continue;
-				else {
-					if(abs(bucketObjects["redBucket"].x-bucketObjects["greenBucket"].x) >= windowWidth / 10) {
-						if(matchColor(brickObjects[i].color,red)) {
-								if((x2 >= bucketObjects["redBucket"].x - windowWidth/10) && (x2 <= bucketObjects["redBucket"].x + windowWidth/10) && y2 <= -windowWidth/12) {
-										score++;
-										brickObjects[i].status = 0;
-									}
-						}
-						else if(matchColor(brickObjects[i].color,lightgreen)) {
-								if((x2 >= bucketObjects["greenBucket"].x - windowWidth/10) && (x2 <= bucketObjects["greenBucket"].x + windowWidth/10) && y2 <= -windowWidth/12) {
-										score++;
-										brickObjects[i].status = 0;
-									}
-						}
-						else if(matchColor(brickObjects[i].color,skyblue1)) {
-								if((x2 >= bucketObjects["redBucket"].x - windowWidth/10) && (x2 <= bucketObjects["redBucket"].x + windowWidth/10) && y2 <= -windowWidth/12) {
-										gameOver = true;
-								}
-								else if((x2 >= bucketObjects["greenBucket"].x - windowWidth/10) && (x2 <= bucketObjects["greenBucket"].x + windowWidth/10) && y2 <= -windowWidth/12) {
-									gameOver = true;
-								}
-						}
+		if(brickObjects[i].status==0)
+			continue;
+		else {
+			if(abs(bucketObjects["redBucket"].x-bucketObjects["greenBucket"].x) >= windowWidth / 10) {
+				if(matchColor(brickObjects[i].color,red)) {
+					if((x2 >= bucketObjects["redBucket"].x - windowWidth/10) && (x2 <= bucketObjects["redBucket"].x + windowWidth/10) && y2 <= -windowWidth/12) {
+						score++;
+						brickObjects[i].status = 0;
+					}
+				}
+				else if(matchColor(brickObjects[i].color,lightgreen)) {
+					if((x2 >= bucketObjects["greenBucket"].x - windowWidth/10) && (x2 <= bucketObjects["greenBucket"].x + windowWidth/10) && y2 <= -windowWidth/12) {
+						score++;
+						brickObjects[i].status = 0;
+					}
+				}
+				else if(matchColor(brickObjects[i].color,skyblue1)) {
+					if((x2 >= bucketObjects["redBucket"].x - windowWidth/10) && (x2 <= bucketObjects["redBucket"].x + windowWidth/10) && y2 <= -windowWidth/12) {
+						gameOver = true;
+					}
+					else if((x2 >= bucketObjects["greenBucket"].x - windowWidth/10) && (x2 <= bucketObjects["greenBucket"].x + windowWidth/10) && y2 <= -windowWidth/12) {
+						gameOver = true;
 					}
 				}
 			}
+		}
+	}
 }
 
 /* Render the scene with openGL */
@@ -768,7 +774,7 @@ GLFWwindow* initGLFW (int width, int height)
 
 	glfwSetErrorCallback(error_callback);
 	if (!glfwInit()) {
-		 exit(EXIT_FAILURE);
+		exit(EXIT_FAILURE);
 	}
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -780,7 +786,7 @@ GLFWwindow* initGLFW (int width, int height)
 
 	if (!window) {
 		glfwTerminate();
-	  exit(EXIT_FAILURE);
+		exit(EXIT_FAILURE);
 	}
 
 	glfwMakeContextCurrent(window);
@@ -835,7 +841,7 @@ void initGL (GLFWwindow* window, int width, int height)
 			brickcolor = skyblue1;
 		int randnum = 1000;
 		while(randnum > 300 || (randnum > -160 && randnum < -40))
-				randnum = rand() % 700 - 325;
+			randnum = rand() % 700 - 325;
 
 		createRectangle("indivBrick",100,brickcolor,brickcolor,brickcolor,brickcolor, randnum, windowHeight/4, BRICKHEIGHT, BRICKWIDTH, "brick");
 	}
