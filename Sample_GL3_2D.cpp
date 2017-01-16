@@ -108,7 +108,7 @@ int redBucketX = -windowWidth/4 - 40, greenBucketX = windowWidth/4 + 40;
 int GRAVITY = 2;
 float ctBrick, lutBrick, launchAngle, ctReflection, lutReflection=0;
 int current_brick = 0;
-bool sKeyPressed = false, fKeyPressed = false;
+bool sKeyPressed = false, fKeyPressed = false, altKeyPressed = false, ctrlKeyPressed = false, leftKeyPressed = false, rightKeyPressed = false;
 bool spaceKeyPressed = false;
 float camera_rotation_angle = 90;
 
@@ -303,6 +303,24 @@ void keyboard (GLFWwindow* window, int key, int scancode, int action, int mods)
 			case GLFW_KEY_F:
 				fKeyPressed = false;
 				break;
+			case GLFW_KEY_LEFT_ALT:
+				altKeyPressed = false;
+				break;
+				case GLFW_KEY_RIGHT_ALT:
+					altKeyPressed = false;
+					break;
+				case GLFW_KEY_LEFT_CONTROL:
+					ctrlKeyPressed = false;
+					break;
+				case GLFW_KEY_RIGHT_CONTROL:
+					ctrlKeyPressed = false;
+					break;
+				case GLFW_KEY_LEFT:
+					leftKeyPressed = false;
+					break;
+				case GLFW_KEY_RIGHT:
+					rightKeyPressed = false;
+					break;
 			case GLFW_KEY_SPACE:
 				spaceKeyPressed = true;
 				break;
@@ -317,6 +335,24 @@ void keyboard (GLFWwindow* window, int key, int scancode, int action, int mods)
 				break;
 			case GLFW_KEY_F:
 				fKeyPressed = true;
+				break;
+			case GLFW_KEY_LEFT_ALT:
+				altKeyPressed = true;
+				break;
+			case GLFW_KEY_RIGHT_ALT:
+				altKeyPressed = true;
+				break;
+			case GLFW_KEY_LEFT_CONTROL:
+				ctrlKeyPressed = true;
+				break;
+			case GLFW_KEY_RIGHT_CONTROL:
+				ctrlKeyPressed = true;
+				break;
+			case GLFW_KEY_LEFT:
+				leftKeyPressed = true;
+				break;
+			case GLFW_KEY_RIGHT:
+				rightKeyPressed = true;
 				break;
 			case GLFW_KEY_ESCAPE:
 				quit(window);
@@ -648,6 +684,18 @@ void draw (GLFWwindow* window )
 
 	keyPressed(VP);
 
+	if(ctrlKeyPressed && leftKeyPressed) {
+		bucketObjects["redBucket"].x -= BUCKETSPEED;
+	}
+	if(ctrlKeyPressed && rightKeyPressed) {
+		bucketObjects["redBucket"].x += BUCKETSPEED;
+	}
+	if(altKeyPressed && leftKeyPressed) {
+		bucketObjects["greenBucket"].x -= BUCKETSPEED;
+	}
+	if(altKeyPressed && rightKeyPressed) {
+		bucketObjects["greenBucket"].x += BUCKETSPEED;
+	}
 	if(spaceKeyPressed) {
 		laserObjects["laserray"].x += cos(launchAngle) * LASERRAYSPEED;
 		laserObjects["laserray"].y += sin(launchAngle) * LASERRAYSPEED;
