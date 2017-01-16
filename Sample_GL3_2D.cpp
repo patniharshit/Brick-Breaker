@@ -745,19 +745,19 @@ void detectCollision(void) {
 		else {
 			if(abs(bucketObjects["redBucket"].x-bucketObjects["greenBucket"].x) >= windowWidth / 10) {
 				if(matchColor(brickObjects[i].color,red)) {
-					if((x2 >= bucketObjects["redBucket"].x - windowWidth/16) && (x2 <= bucketObjects["redBucket"].x + windowWidth/16) && y2 <= -windowWidth/6) {
+					if((x2 >= bucketObjects["redBucket"].x - windowWidth/16) && (x2 <= bucketObjects["redBucket"].x + windowWidth/16) && y2 <= -windowWidth/8) {
 						score++;
 						brickObjects[i].status = 0;
 					}
 				}
 				else if(matchColor(brickObjects[i].color,lightgreen)) {
-					if((x2 >= bucketObjects["greenBucket"].x - windowWidth/16) && (x2 <= bucketObjects["greenBucket"].x + windowWidth/16) && y2 <= -windowWidth/6) {
+					if((x2 >= bucketObjects["greenBucket"].x - windowWidth/16) && (x2 <= bucketObjects["greenBucket"].x + windowWidth/16) && y2 <= -windowWidth/8) {
 						score++;
 						brickObjects[i].status = 0;
 					}
 				}
 				else if(matchColor(brickObjects[i].color,skyblue1)) {
-					if((x2 >= bucketObjects["redBucket"].x - windowWidth/16) && (x2 <= bucketObjects["redBucket"].x + windowWidth/16) && y2 <= -windowWidth/6) {
+					if((x2 >= bucketObjects["redBucket"].x - windowWidth/16) && (x2 <= bucketObjects["redBucket"].x + windowWidth/16) && y2 <= -windowWidth/8) {
 						gameOver = true;
 					}
 					else if((x2 >= bucketObjects["greenBucket"].x - windowWidth/16) && (x2 <= bucketObjects["greenBucket"].x + windowWidth/16) && y2 <= -windowWidth/6) {
