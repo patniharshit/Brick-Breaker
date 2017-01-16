@@ -458,6 +458,9 @@ void mouseButton (GLFWwindow* window, int button, int action, int mods)
 	switch (button) {
 		case GLFW_MOUSE_BUTTON_LEFT:
 			if (action == GLFW_RELEASE) {
+				lmbPressed = false;
+			}
+			if (action == GLFW_PRESS) {
 				spaceKeyPressed = true;
 				lmbPressed = true;
 			}
@@ -587,7 +590,6 @@ void keyPressed(glm::mat4 VP) {
 }
 
 float angle;
-
 void iterateOnMap(map<string,Sprite> objectMap, glm::mat4 VP, GLFWwindow* window )
 {
 	//  Don't change unless you are sure!!
@@ -610,7 +612,7 @@ void iterateOnMap(map<string,Sprite> objectMap, glm::mat4 VP, GLFWwindow* window
 		glm::mat4 rotateGun;
 		double mouse_x, mouse_y;
 		glfwGetCursorPos(window,&mouse_x,&mouse_y);
-		//printf("%f %f\n", mouse_x-600, 400-mouse_y);
+		//printf("%f %f %f\n", laserObjects["laserbody"].y, mouse_y, 180.0f/M_PI * (atan((mouse_y)/(mouse_x - 20))));
 
 		if(lmbPressed) {
 				angle = -(atan((mouse_y-400)/(mouse_x)));
@@ -728,6 +730,9 @@ void detectCollision(void) {
 				gameOver = true;
 			if((abs(x1 - x2) < (BRICKWIDTH + LASERWIDTH) / 2.0f) && (abs(y1 - y2) < (BRICKHEIGHT + LASERHEIGHT) / 2.0f)) {
 				brickObjects[i].status = 0;
+				spaceKeyPressed = false;
+				laserObjects["laserray"].x = laserObjects["laserbarrel"].x;
+				laserObjects["laserray"].y = laserObjects["laserbarrel"].y;
 				if(matchColor(brickObjects[i].color,skyblue1)) {
 						score++;
 						cout << "Score: " << score << endl;
