@@ -684,16 +684,16 @@ void draw (GLFWwindow* window )
 
 	keyPressed(VP);
 
-	if(ctrlKeyPressed && leftKeyPressed) {
+	if(ctrlKeyPressed && leftKeyPressed && bucketObjects["redBucket"].x >= -335) {
 		bucketObjects["redBucket"].x -= BUCKETSPEED;
 	}
-	if(ctrlKeyPressed && rightKeyPressed) {
+	if(ctrlKeyPressed && rightKeyPressed && bucketObjects["redBucket"].x <= 335) {
 		bucketObjects["redBucket"].x += BUCKETSPEED;
 	}
-	if(altKeyPressed && leftKeyPressed) {
+	if(altKeyPressed && leftKeyPressed && bucketObjects["greenBucket"].x >= -335) {
 		bucketObjects["greenBucket"].x -= BUCKETSPEED;
 	}
-	if(altKeyPressed && rightKeyPressed) {
+	if(altKeyPressed && rightKeyPressed && bucketObjects["greenBucket"].x <= 335) {
 		bucketObjects["greenBucket"].x += BUCKETSPEED;
 	}
 	if(spaceKeyPressed) {
