@@ -705,14 +705,15 @@ void detectCollision(void) {
 		else {
 			if(tolerableRedGreenHits < numRedGreenHits)
 				gameOver = true;
-			if((abs(x1 - x2) < (BRICKWIDTH + LASERWIDTH) / 2.0f) && (abs(y1 - y2) < (BRICKHEIGHT + LASERHEIGHT) / 2.0f))
+			if((abs(x1 - x2) < (BRICKWIDTH + LASERWIDTH) / 2.0f) && (abs(y1 - y2) < (BRICKHEIGHT + LASERHEIGHT) / 2.0f)) {
 				brickObjects[i].status = 0;
-			if(matchColor(brickObjects[i].color,skyblue1))
-				score++;
-			else {
-				score--;
-				numRedGreenHits++;
-			}
+				if(matchColor(brickObjects[i].color,skyblue1))
+						score++;
+				else {
+						score--;
+						numRedGreenHits++;
+				}
+		}
 		}
 	}
 
@@ -744,22 +745,22 @@ void detectCollision(void) {
 		else {
 			if(abs(bucketObjects["redBucket"].x-bucketObjects["greenBucket"].x) >= windowWidth / 10) {
 				if(matchColor(brickObjects[i].color,red)) {
-					if((x2 >= bucketObjects["redBucket"].x - windowWidth/10) && (x2 <= bucketObjects["redBucket"].x + windowWidth/10) && y2 <= -windowWidth/12) {
+					if((x2 >= bucketObjects["redBucket"].x - windowWidth/16) && (x2 <= bucketObjects["redBucket"].x + windowWidth/16) && y2 <= -windowWidth/6) {
 						score++;
 						brickObjects[i].status = 0;
 					}
 				}
 				else if(matchColor(brickObjects[i].color,lightgreen)) {
-					if((x2 >= bucketObjects["greenBucket"].x - windowWidth/10) && (x2 <= bucketObjects["greenBucket"].x + windowWidth/10) && y2 <= -windowWidth/12) {
+					if((x2 >= bucketObjects["greenBucket"].x - windowWidth/16) && (x2 <= bucketObjects["greenBucket"].x + windowWidth/16) && y2 <= -windowWidth/6) {
 						score++;
 						brickObjects[i].status = 0;
 					}
 				}
 				else if(matchColor(brickObjects[i].color,skyblue1)) {
-					if((x2 >= bucketObjects["redBucket"].x - windowWidth/10) && (x2 <= bucketObjects["redBucket"].x + windowWidth/10) && y2 <= -windowWidth/12) {
+					if((x2 >= bucketObjects["redBucket"].x - windowWidth/16) && (x2 <= bucketObjects["redBucket"].x + windowWidth/16) && y2 <= -windowWidth/6) {
 						gameOver = true;
 					}
-					else if((x2 >= bucketObjects["greenBucket"].x - windowWidth/10) && (x2 <= bucketObjects["greenBucket"].x + windowWidth/10) && y2 <= -windowWidth/12) {
+					else if((x2 >= bucketObjects["greenBucket"].x - windowWidth/16) && (x2 <= bucketObjects["greenBucket"].x + windowWidth/16) && y2 <= -windowWidth/6) {
 						gameOver = true;
 					}
 				}
@@ -772,6 +773,10 @@ void detectCollision(void) {
 /* Edit this function according to your assignment */
 void draw (GLFWwindow* window )
 {
+	if(gameOver) {
+			printf("GAME OVER\nYour score is %d\n", score);
+			//return;
+	}
 	// clear the color and depth in the frame buffer
 	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -801,7 +806,7 @@ void draw (GLFWwindow* window )
 	}
 	Matrices.projection = glm::ortho((float)(-400.0f/zoom_camera+x_change), (float)(400.0f/zoom_camera+x_change), (float)(-300.0f/zoom_camera+y_change), (float)(300.0f/zoom_camera+y_change), 0.1f, 500.0f);
 	glfwGetCursorPos(window, &mouse_pos_x, &mouse_pos_y);
-	
+
 	glm::mat4 VP = Matrices.projection * Matrices.view;
 
 	// Send our transformation to the currently bound shader, in the "MVP" uniform
