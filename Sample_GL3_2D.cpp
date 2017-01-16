@@ -108,7 +108,7 @@ int GRAVITY = 2;
 float ctBrick, lutBrick, launchAngle, ctReflection, lutReflection=0, ctReload, lutReload=0;
 int current_brick = 0;
 bool sKeyPressed = false, fKeyPressed = false, altKeyPressed = false, ctrlKeyPressed = false, leftKeyPressed = false, rightKeyPressed = false;
-bool spaceKeyPressed = false;
+bool spaceKeyPressed = false, aKeyPressed = false, dKeyPressed = false, lmbPressed = false;
 float camera_rotation_angle = 90;
 bool gameOver = false;
 int score = 0;
@@ -395,6 +395,11 @@ void keyboard (GLFWwindow* window, int key, int scancode, int action, int mods)
 			case GLFW_KEY_M:
 				GRAVITY++;
 				break;
+			case GLFW_KEY_A:
+				aKeyPressed = true;
+				break;
+			case GLFW_KEY_D:
+				dKeyPressed = true;
 			default:
 				break;
 		}
@@ -454,6 +459,7 @@ void mouseButton (GLFWwindow* window, int button, int action, int mods)
 		case GLFW_MOUSE_BUTTON_LEFT:
 			if (action == GLFW_RELEASE) {
 				spaceKeyPressed = true;
+				lmbPressed = true;
 			}
 			break;
 		case GLFW_MOUSE_BUTTON_RIGHT:
@@ -580,6 +586,8 @@ void keyPressed(glm::mat4 VP) {
 	}
 }
 
+float angle;
+
 void iterateOnMap(map<string,Sprite> objectMap, glm::mat4 VP, GLFWwindow* window )
 {
 	//  Don't change unless you are sure!!
@@ -603,7 +611,19 @@ void iterateOnMap(map<string,Sprite> objectMap, glm::mat4 VP, GLFWwindow* window
 		double mouse_x, mouse_y;
 		glfwGetCursorPos(window,&mouse_x,&mouse_y);
 		//printf("%f %f\n", mouse_x-600, 400-mouse_y);
-		float angle = -(atan((mouse_y-400)/(mouse_x)));
+
+		if(lmbPressed) {
+				angle = -(atan((mouse_y-400)/(mouse_x)));
+				lmbPressed = false;
+		}
+		if(aKeyPressed) {
+			angle -= 10*(M_PI/180.0f);
+			aKeyPressed = false;
+		}
+		if(dKeyPressed) {
+			angle += 10*(M_PI/180.0f);
+			dKeyPressed = false;
+		}
 		if(current == "laserbarrel") {
 			rotateGun = glm::rotate((float)(angle), glm::vec3(0,0,1));  // rotate about vector (1,0,0)
 		}
@@ -729,7 +749,7 @@ void detectCollision(void) {
 		float x3 = (x2 - mirrorObjects[current].x)/cos(mirrorObjects[current].degreeRotation * M_PI/180.0f);
 		float y3 = (y2 - mirrorObjects[current].y)/sin(mirrorObjects[current].degreeRotation * M_PI/180.0f);
 
-		if((MIRRORLENGTH/2 >= x3) && (x3 >= -MIRRORLENGTH/2) && (MIRRORLENGTH/2 >= y3) && (y3 >= -MIRRORLENGTH/2))
+		if((MIRRORLENGTH/2>= x3) && (x3 >= -MIRRORLENGTH/2) && (MIRRORLENGTH/2 >= y3) && (y3 >= -MIRRORLENGTH/2))
 		{
 			// handle reflection
 			ctReflection = glfwGetTime();
