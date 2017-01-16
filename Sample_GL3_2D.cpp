@@ -745,22 +745,22 @@ void detectCollision(void) {
 		else {
 			if(abs(bucketObjects["redBucket"].x-bucketObjects["greenBucket"].x) >= windowWidth / 10) {
 				if(matchColor(brickObjects[i].color,red)) {
-					if((x2 >= bucketObjects["redBucket"].x - windowWidth/16) && (x2 <= bucketObjects["redBucket"].x + windowWidth/16) && y2 <= -windowWidth/8) {
+					if((x2 >= bucketObjects["redBucket"].x - windowWidth/16) && (x2 <= bucketObjects["redBucket"].x + windowWidth/16) && y2 <= -windowWidth/7) {
 						score++;
 						brickObjects[i].status = 0;
 					}
 				}
 				else if(matchColor(brickObjects[i].color,lightgreen)) {
-					if((x2 >= bucketObjects["greenBucket"].x - windowWidth/16) && (x2 <= bucketObjects["greenBucket"].x + windowWidth/16) && y2 <= -windowWidth/8) {
+					if((x2 >= bucketObjects["greenBucket"].x - windowWidth/16) && (x2 <= bucketObjects["greenBucket"].x + windowWidth/16) && y2 <= -windowWidth/7) {
 						score++;
 						brickObjects[i].status = 0;
 					}
 				}
 				else if(matchColor(brickObjects[i].color,skyblue1)) {
-					if((x2 >= bucketObjects["redBucket"].x - windowWidth/16) && (x2 <= bucketObjects["redBucket"].x + windowWidth/16) && y2 <= -windowWidth/8) {
+					if((x2 >= bucketObjects["redBucket"].x - windowWidth/16) && (x2 <= bucketObjects["redBucket"].x + windowWidth/16) && y2 <= -windowWidth/7) {
 						gameOver = true;
 					}
-					else if((x2 >= bucketObjects["greenBucket"].x - windowWidth/16) && (x2 <= bucketObjects["greenBucket"].x + windowWidth/16) && y2 <= -windowWidth/6) {
+					else if((x2 >= bucketObjects["greenBucket"].x - windowWidth/16) && (x2 <= bucketObjects["greenBucket"].x + windowWidth/16) && y2 <= -windowWidth/7) {
 						gameOver = true;
 					}
 				}
@@ -775,7 +775,7 @@ void draw (GLFWwindow* window )
 {
 	if(gameOver) {
 			printf("GAME OVER\nYour score is %d\n", score);
-			//return;
+			return;
 	}
 	// clear the color and depth in the frame buffer
 	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
