@@ -339,7 +339,6 @@ bool rectangle_rot_status = true;
 void keyboard (GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	// Function is called first on GLFW_PRESS.
-
 	if (action == GLFW_RELEASE) {
 		switch (key) {
 		case GLFW_KEY_UP:
@@ -612,9 +611,11 @@ void iterateOnMap(map<string,Sprite> objectMap, glm::mat4 VP, GLFWwindow* window
 		glm::mat4 rotateGun;
 		double mouse_x, mouse_y;
 		glfwGetCursorPos(window,&mouse_x,&mouse_y);
-		printf("%f %f\n", 0.5833*mouse_x - 299.25 + 380, -0.667*mouse_y+300);
+		//printf("%f %f %f %f\n", 0.5833*mouse_x - 299.25 - 55, -0.667*mouse_y+340 + 34, bucketObjects["redBucket"].x, bucketObjects["redBucket"].y);
 
 		if(lmbPressed) {
+				float mx = 0.5833*mouse_x - 299.25 - 55;
+				float my = -0.667*mouse_y+340 + 34;
 				angle = atan((-0.667*mouse_y+300)/(0.5833*mouse_x - 299.25 + 280));
 				lmbPressed = false;
 		}
@@ -800,8 +801,6 @@ void detectCollision(void) {
 	}
 }
 
-/* Render the scene with openGL */
-/* Edit this function according to your assignment */
 void draw (GLFWwindow* window )
 {
 	if(gameOver) {
