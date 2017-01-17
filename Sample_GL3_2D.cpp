@@ -612,10 +612,10 @@ void iterateOnMap(map<string,Sprite> objectMap, glm::mat4 VP, GLFWwindow* window
 		glm::mat4 rotateGun;
 		double mouse_x, mouse_y;
 		glfwGetCursorPos(window,&mouse_x,&mouse_y);
-		//printf("%f %f %f\n", laserObjects["laserbody"].y, mouse_y, 180.0f/M_PI * (atan((mouse_y)/(mouse_x - 20))));
+		printf("%f %f\n", 0.5833*mouse_x - 299.25 + 380, -0.667*mouse_y+300);
 
 		if(lmbPressed) {
-				angle = -(atan((mouse_y-400)/(mouse_x)));
+				angle = atan((-0.667*mouse_y+300)/(0.5833*mouse_x - 299.25 + 280));
 				lmbPressed = false;
 		}
 		if(aKeyPressed) {
@@ -804,10 +804,10 @@ void detectCollision(void) {
 /* Edit this function according to your assignment */
 void draw (GLFWwindow* window )
 {
-	if(gameOver) {
-			printf("GAME OVER\nYour score is %d\n", score);
-			return;
-	}
+	//if(gameOver) {
+		//	printf("GAME OVER\nYour score is %d\n", score);
+		//	return;
+//	}
 	// clear the color and depth in the frame buffer
 	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
