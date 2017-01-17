@@ -804,10 +804,10 @@ void detectCollision(void) {
 /* Edit this function according to your assignment */
 void draw (GLFWwindow* window )
 {
-	//if(gameOver) {
-		//	printf("GAME OVER\nYour score is %d\n", score);
-		//	return;
-//	}
+	if(gameOver) {
+			printf("GAME OVER\nYour score is %d\n", score);
+			return;
+	}
 	// clear the color and depth in the frame buffer
 	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
