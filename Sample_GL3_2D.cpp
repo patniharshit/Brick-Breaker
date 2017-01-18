@@ -111,7 +111,7 @@ bool sKeyPressed = false, fKeyPressed = false, altKeyPressed = false, ctrlKeyPre
 bool spaceKeyPressed = false, aKeyPressed = false, dKeyPressed = false, lmbPressed = false;
 float camera_rotation_angle = 90;
 bool gameOver = false;
-bool clickRedBucket = false, clickGreenBucket = false;
+bool clickRedBucket = false, clickGreenBucket = false, clickLaserBody = false;
 int score = 0;
 int numRedGreenHits = 0;
 int tolerableRedGreenHits = 10;
@@ -463,6 +463,8 @@ void mouseButton (GLFWwindow* window, int button, int action, int mods)
 						clickRedBucket = false;
 				if(clickGreenBucket)
 						clickGreenBucket = false;
+				if(clickLaserBody)
+						clickLaserBody = false;
 			}
 			if (action == GLFW_PRESS) {
 				lmbPressed = true;
@@ -627,16 +629,27 @@ void iterateOnMap(map<string,Sprite> objectMap, glm::mat4 VP, GLFWwindow* window
 				else if(clickGreenBucket) {
 						bucketObjects["greenBucket"].x = mx;
 				}
-				else if((mx <= windowWidth/10 + bucketObjects["redBucket"].x) && (mx >= -windowWidth/10 + bucketObjects["redBucket"].x) && (my >= -windowHeight/16 + bucketObjects["redBucket"].y) && (my <= windowHeight/16 + bucketObjects["redBucket"].y) && !clickGreenBucket) {
+				else if(clickLaserBody) {
+					for(map<string,Sprite>::iterator it=laserObjects.begin(); it != laserObjects.end();it++){
+						string current = it->first;
+						laserObjects[current].y = my;
+					}
+				}
+				else if((mx <= 70 + laserObjects["laserbody"].x) && (mx >= -70 + laserObjects["laserbody"].x) && (my >= -70 + laserObjects["laserbody"].y) && (my <= 80 + laserObjects["laserbody"].y) && !clickGreenBucket && !clickRedBucket) {
+						clickLaserBody = true;
+				}
+				else if((mx <= windowWidth/20 + bucketObjects["redBucket"].x) && (mx >= -windowWidth/20 + bucketObjects["redBucket"].x) && (my >= -windowHeight/24 + bucketObjects["redBucket"].y) && (my <= windowHeight/24 + bucketObjects["redBucket"].y) && !clickGreenBucket) {
 						clickRedBucket = true;
 				}
-				else if((mx <= windowWidth/10 + bucketObjects["greenBucket"].x) && (mx >= -windowWidth/10 + bucketObjects["greenBucket"].x) && (my >= -windowHeight/16 + bucketObjects["greenBucket"].y) && (my <= windowHeight/16 + bucketObjects["greenBucket"].y) && !clickRedBucket) {
+				else if((mx <= windowWidth/20 + bucketObjects["greenBucket"].x) && (mx >= -windowWidth/20 + bucketObjects["greenBucket"].x) && (my >= -windowHeight/24 + bucketObjects["greenBucket"].y) && (my <= windowHeight/24 + bucketObjects["greenBucket"].y) && !clickRedBucket) {
 						clickGreenBucket = true;
 				}
 				else {
+					if(mx > -300) {
 						spaceKeyPressed = true;
 						angle = atan((-0.667*mouse_y+300)/(0.5833*mouse_x - 299.25 + 280));
 						lmbPressed = false;
+					}
 				}
 
 		}
