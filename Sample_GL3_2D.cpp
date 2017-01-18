@@ -624,9 +624,11 @@ void iterateOnMap(map<string,Sprite> objectMap, glm::mat4 VP, GLFWwindow* window
 				float my = -0.667*mouse_y + 340 + 34;
 
 				if(clickRedBucket) {
+					if(mx >= -345 && mx <= 345)
 						bucketObjects["redBucket"].x = mx;
 				}
 				else if(clickGreenBucket) {
+					if(mx >= -345 && mx <= 345)
 						bucketObjects["greenBucket"].x = mx;
 				}
 				else if(clickLaserBody) {
@@ -651,7 +653,6 @@ void iterateOnMap(map<string,Sprite> objectMap, glm::mat4 VP, GLFWwindow* window
 						lmbPressed = false;
 					}
 				}
-
 		}
 		if(aKeyPressed) {
 			angle -= 10*(M_PI/180.0f);
