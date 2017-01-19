@@ -105,7 +105,7 @@ map<string, Sprite> otherObjects;
 int windowWidth = 1200, windowHeight = 1200;
 int redBucketX = -windowWidth/4 - 40, greenBucketX = windowWidth/4 + 40;
 int GRAVITY = 2;
-float ctBrick, lutBrick, launchAngle, ctReflection, lutReflection=0, ctReload, lutReload=0;
+float ctBrick, lutBrick, launchAngle, ctReflection, lutReflection=0, ctReload, lutReload=0, ctRay, lutRay=0;
 int current_brick = 0;
 bool sKeyPressed = false, fKeyPressed = false, altKeyPressed = false, ctrlKeyPressed = false, leftKeyPressed = false, rightKeyPressed = false;
 bool spaceKeyPressed = false, aKeyPressed = false, dKeyPressed = false, lmbPressed = false;
@@ -691,6 +691,7 @@ void iterateOnMap(map<string,Sprite> objectMap, glm::mat4 VP, GLFWwindow* window
 
 		glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
 
+		ctRay = glfwGetTime();
 		if(spaceKeyPressed && current == "laserray" &&
 				(laserObjects["laserray"].x > laserObjects["lasergun"].x + 40)) {
 			draw3DObject(objectMap[current].object);
@@ -810,24 +811,24 @@ void detectCollision(void) {
 		else {
 			if(abs(bucketObjects["redBucket"].x-bucketObjects["greenBucket"].x) >= windowWidth / 10) {
 				if(matchColor(brickObjects[i].color,red)) {
-					if((x2 >= bucketObjects["redBucket"].x - windowWidth/16) && (x2 <= bucketObjects["redBucket"].x + windowWidth/16) && y2 <= -windowWidth/7) {
+					if((x2 >= bucketObjects["redBucket"].x - windowWidth/16) && (x2 <= bucketObjects["redBucket"].x + windowWidth/16) && y2 <= -180) {
 						score++;
 						cout << "Score: " << score << endl;
 						brickObjects[i].status = 0;
 					}
 				}
 				else if(matchColor(brickObjects[i].color,lightgreen)) {
-					if((x2 >= bucketObjects["greenBucket"].x - windowWidth/16) && (x2 <= bucketObjects["greenBucket"].x + windowWidth/16) && y2 <= -windowWidth/7) {
+					if((x2 >= bucketObjects["greenBucket"].x - windowWidth/16) && (x2 <= bucketObjects["greenBucket"].x + windowWidth/16) && y2 <= -180) {
 						score++;
 						cout << "Score: " << score << endl;
 						brickObjects[i].status = 0;
 					}
 				}
 				else if(matchColor(brickObjects[i].color,skyblue1)) {
-					if((x2 >= bucketObjects["redBucket"].x - windowWidth/16) && (x2 <= bucketObjects["redBucket"].x + windowWidth/16) && y2 <= -windowWidth/7) {
+					if((x2 >= bucketObjects["redBucket"].x - windowWidth/16) && (x2 <= bucketObjects["redBucket"].x + windowWidth/16) && y2 <= -180) {
 						gameOver = true;
 					}
-					else if((x2 >= bucketObjects["greenBucket"].x - windowWidth/16) && (x2 <= bucketObjects["greenBucket"].x + windowWidth/16) && y2 <= -windowWidth/7) {
+					else if((x2 >= bucketObjects["greenBucket"].x - windowWidth/16) && (x2 <= bucketObjects["greenBucket"].x + windowWidth/16) && y2 <= -180) {
 						gameOver = true;
 					}
 				}
@@ -975,7 +976,6 @@ void initGL (GLFWwindow* window, int width, int height)
 	createRectangle("mirrorbottomleft",-10,skyblue2,skyblue2,skyblue2,skyblue2, -100, -150, 2, MIRRORLENGTH, "mirror");
 	createRectangle("mirrortopright",-60,skyblue2,skyblue2,skyblue2,skyblue2, 325, 250, 2, MIRRORLENGTH, "mirror");
 	createRectangle("mirrorbottomright",45,skyblue2,skyblue2,skyblue2,skyblue2, 350, -150, 2, MIRRORLENGTH, "mirror");
-
 
 	COLOR brickcolor = red;
 	for(int i =0; i < 1000; i++) {
