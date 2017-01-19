@@ -250,6 +250,7 @@ void check_pan(){
 		y_change=300-300.0f/zoom_camera;
 }
 
+
 /* Generate VAO, VBOs and return VAO handle */
 struct VAO* create3DObject (GLenum primitive_mode, int numVertices, const GLfloat* vertex_buffer_data, const GLfloat* color_buffer_data, GLenum fill_mode=GL_FILL)
 {
@@ -692,6 +693,7 @@ void iterateOnMap(map<string,Sprite> objectMap, glm::mat4 VP, GLFWwindow* window
 		glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
 
 		ctRay = glfwGetTime();
+
 		if(spaceKeyPressed && current == "laserray" &&
 				(laserObjects["laserray"].x > laserObjects["lasergun"].x + 40)) {
 			draw3DObject(objectMap[current].object);
@@ -884,11 +886,11 @@ void draw (GLFWwindow* window )
 	// Send our transformation to the currently bound shader, in the "MVP" uniform
 	// For each model you render, since the MVP will be different (at least the M part)
 
+	iterateOnMap(otherObjects, VP, window);
 	iterateOnMap(bucketObjects, VP, window);
 	iterateOnMap(laserObjects, VP, window);
 	iterateOnMap(mirrorObjects, VP, window);
 	iterateOnBrickObjects(brickObjects, VP);
-	iterateOnMap(otherObjects, VP, window);
 
 	keyPressed(VP);
 
@@ -982,6 +984,12 @@ void initGL (GLFWwindow* window, int width, int height)
 	createRectangle("mirrorbottomleft",-10,skyblue2,skyblue2,skyblue2,skyblue2, -100, -150, 2, MIRRORLENGTH, "mirror");
 	createRectangle("mirrortopright",-60,skyblue2,skyblue2,skyblue2,skyblue2, 325, 250, 2, MIRRORLENGTH, "mirror");
 	createRectangle("mirrorbottomright",45,skyblue2,skyblue2,skyblue2,skyblue2, 350, -150, 2, MIRRORLENGTH, "mirror");
+
+	for(int i=0; i<400; i++) {
+		int x = rand()%800 - 400;
+		int y = rand()%800 - 400;
+		createRectangle("as" + i,0,white,white,white,white, x, y, 1, 1, "other");
+	}
 
 	COLOR brickcolor = red;
 	for(int i =0; i < 1000; i++) {
