@@ -13,7 +13,7 @@
 
 using namespace std;
 
-#define LASERRAYSPEED 10
+#define LASERRAYSPEED 15
 #define LASERGUNVELOCITY 6
 #define BUCKETSPEED 5
 #define BRICKHEIGHT 40
@@ -110,7 +110,7 @@ int current_brick = 0;
 bool sKeyPressed = false, fKeyPressed = false, altKeyPressed = false, ctrlKeyPressed = false, leftKeyPressed = false, rightKeyPressed = false;
 bool spaceKeyPressed = false, aKeyPressed = false, dKeyPressed = false, lmbPressed = false;
 float camera_rotation_angle = 90;
-bool gameOver = false;
+bool gameOver = false, bricksOverlimit = false;
 bool clickRedBucket = false, clickGreenBucket = false, clickLaserBody = false;
 int score = 0;
 int numRedGreenHits = 0;
@@ -763,8 +763,10 @@ void detectCollision(void) {
 		if(brickObjects[i].status==0)
 			continue;
 		else {
-			if(tolerableRedGreenHits < numRedGreenHits)
+			if(tolerableRedGreenHits < numRedGreenHits) {
 				gameOver = true;
+				bricksOverlimit = true;
+			}
 			if((abs(x1 - x2) < (BRICKWIDTH + LASERWIDTH) / 2.0f) && (abs(y1 - y2) < (BRICKHEIGHT + LASERHEIGHT) / 2.0f)) {
 				brickObjects[i].status = 0;
 				spaceKeyPressed = false;
@@ -840,7 +842,11 @@ void detectCollision(void) {
 void draw (GLFWwindow* window )
 {
 	if(gameOver) {
-			printf("GAME OVER\nYour score is %d\n", score);
+			if(bricksOverlimit)
+					printf("You shooted more red, green bricks then allowed\n");
+			else
+					printf("A black brick collided with bucket\n\n");
+			printf("GAME OVER. Your score is %d\n", score);
 			return;
 	}
 	// clear the color and depth in the frame buffer
