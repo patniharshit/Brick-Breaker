@@ -13,7 +13,7 @@
 
 using namespace std;
 
-#define LASERRAYSPEED 15
+#define LASERRAYSPEED 10
 #define LASERGUNVELOCITY 6
 #define BUCKETSPEED 5
 #define BRICKHEIGHT 40
@@ -105,10 +105,10 @@ map<string, Sprite> otherObjects;
 int windowWidth = 1200, windowHeight = 1200;
 int redBucketX = -windowWidth/4 - 40, greenBucketX = windowWidth/4 + 40;
 int GRAVITY = 2;
-float ctBrick, lutBrick, launchAngle, ctReflection, lutReflection=0, ctReload, lutReload=0, ctRay, lutRay=0;
+float ctBrick, lutBrick, launchAngle, ctReflection, lutReflection=0, ctReload, lutReload=0, ctRay, lutRay=0, lutPowerUp=0;
 int current_brick = 0;
 bool sKeyPressed = false, fKeyPressed = false, altKeyPressed = false, ctrlKeyPressed = false, leftKeyPressed = false, rightKeyPressed = false;
-bool spaceKeyPressed = false, aKeyPressed = false, dKeyPressed = false, lmbPressed = false;
+bool spaceKeyPressed = false, aKeyPressed = false, dKeyPressed = false, lmbPressed = false, powerup = false;
 float camera_rotation_angle = 90;
 bool gameOver = false, bricksOverlimit = false;
 bool clickRedBucket = false, clickGreenBucket = false, clickLaserBody = false;
@@ -249,7 +249,6 @@ void check_pan(){
 	else if(y_change+300.0f/zoom_camera>300)
 		y_change=300-300.0f/zoom_camera;
 }
-
 
 /* Generate VAO, VBOs and return VAO handle */
 struct VAO* create3DObject (GLenum primitive_mode, int numVertices, const GLfloat* vertex_buffer_data, const GLfloat* color_buffer_data, GLenum fill_mode=GL_FILL)
@@ -771,9 +770,23 @@ void detectCollision(void) {
 			}
 			if((abs(x1 - x2) < (BRICKWIDTH + LASERWIDTH) / 2.0f) && (abs(y1 - y2) < (BRICKHEIGHT + LASERHEIGHT) / 2.0f)) {
 				brickObjects[i].status = 0;
+				if(i % 5 == 0) {
+					powerup = true;
+					lutPowerUp = glfwGetTime();
+				}
+				if(glfwGetTime() - lutPowerUp > 15) {
+					powerup = false;
+				}
+				if(!powerup) {
 				spaceKeyPressed = false;
 				laserObjects["laserray"].x = laserObjects["laserbarrel"].x;
 				laserObjects["laserray"].y = laserObjects["laserbarrel"].y;
+			}
+				if(i % 5 == 0) {
+					score += 5;
+					cout << "Score: " << score << endl;
+
+				}
 				if(matchColor(brickObjects[i].color,skyblue1)) {
 						score++;
 						cout << "Score: " << score << endl;
@@ -892,6 +905,7 @@ void draw (GLFWwindow* window )
 	iterateOnMap(mirrorObjects, VP, window);
 	iterateOnBrickObjects(brickObjects, VP);
 
+
 	keyPressed(VP);
 
 	if(ctrlKeyPressed && leftKeyPressed && bucketObjects["redBucket"].x >= -335) {
@@ -985,14 +999,14 @@ void initGL (GLFWwindow* window, int width, int height)
 	createRectangle("mirrortopright",-60,skyblue2,skyblue2,skyblue2,skyblue2, 325, 250, 2, MIRRORLENGTH, "mirror");
 	createRectangle("mirrorbottomright",45,skyblue2,skyblue2,skyblue2,skyblue2, 350, -150, 2, MIRRORLENGTH, "mirror");
 
-	for(int i=0; i<400; i++) {
+	for(int i=0; i<100; i++) {
 		int x = rand()%800 - 400;
 		int y = rand()%800 - 400;
 		createRectangle("as" + i,0,white,white,white,white, x, y, 1, 1, "other");
 	}
 
 	COLOR brickcolor = red;
-	for(int i =0; i < 1000; i++) {
+	for(int i = 0; i < 1000; i++) {
 		if(i % 3 == 0)
 			brickcolor = red;
 		else if(i % 3 == 1)
@@ -1003,7 +1017,10 @@ void initGL (GLFWwindow* window, int width, int height)
 		while(randnum > 300 || (randnum > -160 && randnum < -40))
 			randnum = rand() % 700 - 325;
 
-		createRectangle("indivBrick",100,brickcolor,brickcolor,brickcolor,brickcolor, randnum, windowHeight/3, BRICKHEIGHT, BRICKWIDTH, "brick");
+			if(i%5==0)
+				createRectangle("indivBrick",100,coingold,red,coingold,red, randnum, windowHeight/3, BRICKHEIGHT, BRICKWIDTH, "brick");
+			else
+				createRectangle("indivBrick",100,brickcolor,brickcolor,brickcolor,brickcolor, randnum, windowHeight/3, BRICKHEIGHT, BRICKWIDTH, "brick");
 	}
 
 	// Create and compile our GLSL program from the shaders
