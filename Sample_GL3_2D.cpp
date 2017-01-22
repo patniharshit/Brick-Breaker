@@ -50,7 +50,8 @@ typedef struct COLOR COLOR;
 COLOR grey = {168.0/255.0,168.0/255.0,168.0/255.0};
 COLOR gold = {218.0/255.0,165.0/255.0,32.0/255.0};
 COLOR coingold = {255.0/255.0,223.0/255.0,0.0/255.0};
-COLOR red = {255.0/255.0,51.0/255.0,51.0/255.0};
+COLOR darkred = {178.0/255.0,34.0/255.0,34.0/255.0};
+COLOR red = {255.0/255.0,30.0/255.0,30.0/255.0};
 COLOR lightgreen = {57/255.0,230/255.0,0/255.0};
 COLOR darkgreen = {51/255.0,102/255.0,0/255.0};
 COLOR black = {30/255.0,30/255.0,21/255.0};
@@ -770,7 +771,7 @@ void detectCollision(void) {
 			}
 			if((abs(x1 - x2) < (BRICKWIDTH + LASERWIDTH) / 2.0f) && (abs(y1 - y2) < (BRICKHEIGHT + LASERHEIGHT) / 2.0f)) {
 				brickObjects[i].status = 0;
-				if(i % 5 == 0) {
+				if((i % 20 == 0) && (i != 0)) {
 					powerup = true;
 					lutPowerUp = glfwGetTime();
 				}
@@ -860,7 +861,7 @@ void draw (GLFWwindow* window )
 			if(bricksOverlimit)
 					printf("You shooted more red, green bricks then allowed\n");
 			else
-					printf("A black brick collided with bucket\n\n");
+					printf("A blue brick collided with bucket\n\n");
 			printf("GAME OVER. Your score is %d\n", score);
 			return;
 	}
@@ -988,12 +989,12 @@ GLFWwindow* initGLFW (int width, int height)
 void initGL (GLFWwindow* window, int width, int height)
 {
 	createRectangle("separator",0,white,white,white,white,0, -windowHeight/6,0.5,windowWidth,"other");
-	createRectangle("redBucket",0,red,red,red,red, -windowWidth/4 -40, -windowHeight/5 - 10,windowHeight/12,windowWidth/10,"bucket");
+	createRectangle("redBucket",0,darkred,darkred,red,red, -windowWidth/4 -40, -windowHeight/5 - 10,windowHeight/12,windowWidth/10,"bucket");
 	createRectangle("greenBucket",0,darkgreen,darkgreen,lightgreen,lightgreen, windowWidth/4 +40, -windowHeight/5 -10,windowHeight/12,windowWidth/10,"bucket");
 	createRectangle("laserbody",0,white,white,white,white,-410, 40, 40, 80,"laser");
 	createRectangle("lasergun",0,white,white,white,white,-380, 40, 25, 40, "laser");
 	createRectangle("laserbarrel",0,white,white,white,white, -365, 40, 5, 40, "laser");
-	createRectangle("laserray",0,red,red,red,red,laserObjects["laserbarrel"].x, laserObjects["laserbarrel"].y, LASERWIDTH, LASERHEIGHT, "laser");
+	createRectangle("laserray",0,coingold,coingold,coingold,coingold,laserObjects["laserbarrel"].x, laserObjects["laserbarrel"].y, LASERWIDTH, LASERHEIGHT, "laser");
 	createRectangle("mirrortopleft",-30,skyblue2,skyblue2,skyblue2,skyblue2, -100, 250, 2, MIRRORLENGTH, "mirror");
 	createRectangle("mirrorbottomleft",-10,skyblue2,skyblue2,skyblue2,skyblue2, -100, -150, 2, MIRRORLENGTH, "mirror");
 	createRectangle("mirrortopright",-60,skyblue2,skyblue2,skyblue2,skyblue2, 325, 250, 2, MIRRORLENGTH, "mirror");
@@ -1017,7 +1018,7 @@ void initGL (GLFWwindow* window, int width, int height)
 		while(randnum > 300 || (randnum > -160 && randnum < -40))
 			randnum = rand() % 700 - 325;
 
-			if(i%5==0)
+			if(i % 20 == 0 && i!=0)
 				createRectangle("indivBrick",100,coingold,red,coingold,red, randnum, windowHeight/3, BRICKHEIGHT, BRICKWIDTH, "brick");
 			else
 				createRectangle("indivBrick",100,brickcolor,brickcolor,brickcolor,brickcolor, randnum, windowHeight/3, BRICKHEIGHT, BRICKWIDTH, "brick");
