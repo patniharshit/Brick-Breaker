@@ -148,7 +148,7 @@ void audio_init() {
     buffer = (unsigned char*) malloc(buffer_size * sizeof(unsigned char));
 
     /* open the file and get the decoding format */
-    mpg123_open(mh, "../safari.mp3");
+    mpg123_open(mh, "../ebit.mp3");
     mpg123_getformat(mh, &rate, &channels, &encoding);
 
     /* set the output format and open the output device */
@@ -166,6 +166,7 @@ void audio_play() {
         ao_play(dev, (char*) buffer, done);
     else mpg123_seek(mh, 0, SEEK_SET);
 }
+
 
 void audio_close() {
     /* clean up */
@@ -888,7 +889,7 @@ void detectCollision(void) {
 				laserObjects["laserray"].x = laserObjects["laserbarrel"].x;
 				laserObjects["laserray"].y = laserObjects["laserbarrel"].y;
 			}
-				if(i % 5 == 0) {
+				if(i % 5 == 0 && i!=0) {
 					score += 5;
 					cout << "Score: " << score << endl;
 
@@ -962,6 +963,7 @@ void detectCollision(void) {
 	}
 }
 
+bool once = true;
 void draw (GLFWwindow* window )
 {
 	if(gameOver) {
@@ -971,7 +973,10 @@ void draw (GLFWwindow* window )
 					printf("A blue brick collided with bucket\n\n");
 			printf("GAME OVER. Your score is %d\n", score);
 
-			audio_close();
+			if(once) {
+					audio_close();
+			}
+			once = false;
 
 			return;
 	}
