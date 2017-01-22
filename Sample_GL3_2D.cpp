@@ -685,7 +685,8 @@ void iterateOnMap(map<string,Sprite> objectMap, glm::mat4 VP, GLFWwindow* window
 				else if(clickLaserBody) {
 					for(map<string,Sprite>::iterator it=laserObjects.begin(); it != laserObjects.end();it++){
 						string current = it->first;
-						laserObjects[current].y = my;
+						if(my <= 285 && my >= -180)
+								laserObjects[current].y = my;
 					}
 				}
 				else if((mx <= 70 + laserObjects["laserbody"].x) && (mx >= -70 + laserObjects["laserbody"].x) && (my >= -70 + laserObjects["laserbody"].y) && (my <= 80 + laserObjects["laserbody"].y) && !clickGreenBucket && !clickRedBucket) {
@@ -864,6 +865,8 @@ void detectCollision(void) {
 			// handle reflection
 			ctReflection = glfwGetTime();
 			if(ctReflection - lutReflection > 0.5) {
+				laserObjects["laserray"].x += 15*cos(angle * M_PI/180.0f);
+				laserObjects["laserray"].y -= 50*sin(angle * M_PI/180.0f);
 				launchAngle = 2 * (mirrorObjects[current].degreeRotation) * M_PI/180.0f - launchAngle;
 				lutReflection = glfwGetTime();
 			}
@@ -1041,9 +1044,9 @@ void initGL (GLFWwindow* window, int width, int height)
 	createRectangle("separator",0,white,white,white,white,0, -windowHeight/6,0.5,windowWidth,"other");
 	createTrapezium("redBucket",0,darkred,darkred,red,red, -windowWidth/4 -40, -windowHeight/5 - 10,windowHeight/12,windowWidth/10,"bucket");
 	createTrapezium("greenBucket",0,darkgreen,darkgreen,lightgreen,lightgreen, windowWidth/4 +40, -windowHeight/5 -10,windowHeight/12,windowWidth/10,"bucket");
-	createRectangle("laserbody",0,white,white,white,white,-410, 40, 40, 80,"laser");
-	createRectangle("lasergun",0,white,white,white,white,-380, 40, 25, 40, "laser");
-	createRectangle("laserbarrel",0,white,white,white,white, -365, 40, 5, 40, "laser");
+	createRectangle("laserbody",0,cratebrown,cratebrown,cratebrown1,cratebrown1,-410, 40, 40, 80,"laser");
+	createRectangle("lasergun",0,brown1,brown1,cratebrown2,cratebrown2,-380, 40, 25, 40, "laser");
+	createRectangle("laserbarrel",0,brown1,brown1,cratebrown2,cratebrown2, -365, 40, 5, 40, "laser");
 	createRectangle("laserray",0,coingold,coingold,coingold,coingold,laserObjects["laserbarrel"].x, laserObjects["laserbarrel"].y, LASERWIDTH, LASERHEIGHT, "laser");
 	createRectangle("mirrortopleft",-30,skyblue2,skyblue2,skyblue2,skyblue2, -100, 250, 2, MIRRORLENGTH, "mirror");
 	createRectangle("mirrorbottomleft",-10,skyblue2,skyblue2,skyblue2,skyblue2, -100, -150, 2, MIRRORLENGTH, "mirror");
