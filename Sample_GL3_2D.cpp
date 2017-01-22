@@ -115,7 +115,7 @@ bool gameOver = false, bricksOverlimit = false;
 bool clickRedBucket = false, clickGreenBucket = false, clickLaserBody = false;
 int score = 0;
 int numRedGreenHits = 0;
-int tolerableRedGreenHits = 10;
+int tolerableRedGreenHits = 20;
 float x_change = 0; //For the camera pan
 float y_change = 0; //For the camera pan
 double new_mouse_pos_x, new_mouse_pos_y;
@@ -860,13 +860,13 @@ void detectCollision(void) {
 		float x3 = (x2 - mirrorObjects[current].x)/cos(mirrorObjects[current].degreeRotation * M_PI/180.0f);
 		float y3 = (y2 - mirrorObjects[current].y)/sin(mirrorObjects[current].degreeRotation * M_PI/180.0f);
 
-		if((MIRRORLENGTH/2>= x3) && (x3 >= -MIRRORLENGTH/2) && (MIRRORLENGTH/2 >= y3) && (y3 >= -MIRRORLENGTH/2))
+		if((MIRRORLENGTH/2 + 10 >= x3) && (x3 >= -MIRRORLENGTH/2) && (MIRRORLENGTH/2 + 10 >= y3) && (y3 >= -MIRRORLENGTH/2))
 		{
 			// handle reflection
 			ctReflection = glfwGetTime();
 			if(ctReflection - lutReflection > 0.5) {
-				laserObjects["laserray"].x += 15*cos(angle * M_PI/180.0f);
-				laserObjects["laserray"].y -= 50*sin(angle * M_PI/180.0f);
+				laserObjects["laserray"].x += 5*cos(angle * M_PI/180.0f);
+				laserObjects["laserray"].y -= 20*sin(angle * M_PI/180.0f);
 				launchAngle = 2 * (mirrorObjects[current].degreeRotation) * M_PI/180.0f - launchAngle;
 				lutReflection = glfwGetTime();
 			}
