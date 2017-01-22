@@ -571,6 +571,56 @@ void createRectangle (string name, float degreeRotation, COLOR colorA, COLOR col
 		otherObjects[name]=rectangleSprite;
 }
 
+void createTrapezium (string name, float degreeRotation, COLOR colorA, COLOR colorB, COLOR colorC, COLOR colorD, float x, float y, float height, float width, string component)
+{
+	// GL3 accepts only Triangles. Quads are not supported
+	float w=width/2,h=height/2;
+	GLfloat vertex_buffer_data [] = {
+		-w+15,-h,0, // vertex 1
+		-w,h,0, // vertex 2
+		w,h,0, // vertex 3
+
+		w,h,0, // vertex 3
+		w-15,-h,0, // vertex 4
+		-w+15,-h,0  // vertex 1
+	};
+
+	GLfloat color_buffer_data [] = {
+		colorA.r,colorA.g,colorA.b, // color 1
+		colorB.r,colorB.g,colorB.b, // color 2
+		colorC.r,colorC.g,colorC.b, // color 3
+
+		colorC.r,colorC.g,colorC.b, // color 4
+		colorD.r,colorD.g,colorD.b, // color 5
+		colorA.r,colorA.g,colorA.b // color 6
+	};
+
+	// create3DObject creates and returns a handle to a VAO that can be used later
+	VAO *rectangle = create3DObject(GL_TRIANGLES, 6, vertex_buffer_data, color_buffer_data, GL_FILL);
+
+	Sprite rectangleSprite = {};
+	rectangleSprite.color = colorA;
+	rectangleSprite.name = name;
+	rectangleSprite.object = rectangle;
+	rectangleSprite.x=x;
+	rectangleSprite.y=y;
+	rectangleSprite.height=height;
+	rectangleSprite.width=width;
+	rectangleSprite.status=1;
+	rectangleSprite.inAir=0;
+	rectangleSprite.x_speed=0;
+	rectangleSprite.y_speed=0;
+	rectangleSprite.fixed=0;
+	rectangleSprite.radius=(sqrt(height*height+width*width))/2;
+	rectangleSprite.friction=0.4;
+	rectangleSprite.health=100;
+	rectangleSprite.degreeRotation=degreeRotation;
+	//All the different layers
+
+	if(component=="bucket")
+		bucketObjects[name]=rectangleSprite;
+
+}
 
 void keyPressed(glm::mat4 VP) {
 	if(sKeyPressed) {
@@ -989,8 +1039,8 @@ GLFWwindow* initGLFW (int width, int height)
 void initGL (GLFWwindow* window, int width, int height)
 {
 	createRectangle("separator",0,white,white,white,white,0, -windowHeight/6,0.5,windowWidth,"other");
-	createRectangle("redBucket",0,darkred,darkred,red,red, -windowWidth/4 -40, -windowHeight/5 - 10,windowHeight/12,windowWidth/10,"bucket");
-	createRectangle("greenBucket",0,darkgreen,darkgreen,lightgreen,lightgreen, windowWidth/4 +40, -windowHeight/5 -10,windowHeight/12,windowWidth/10,"bucket");
+	createTrapezium("redBucket",0,darkred,darkred,red,red, -windowWidth/4 -40, -windowHeight/5 - 10,windowHeight/12,windowWidth/10,"bucket");
+	createTrapezium("greenBucket",0,darkgreen,darkgreen,lightgreen,lightgreen, windowWidth/4 +40, -windowHeight/5 -10,windowHeight/12,windowWidth/10,"bucket");
 	createRectangle("laserbody",0,white,white,white,white,-410, 40, 40, 80,"laser");
 	createRectangle("lasergun",0,white,white,white,white,-380, 40, 25, 40, "laser");
 	createRectangle("laserbarrel",0,white,white,white,white, -365, 40, 5, 40, "laser");
