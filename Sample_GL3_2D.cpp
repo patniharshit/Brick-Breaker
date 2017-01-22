@@ -5,14 +5,15 @@
 #include <time.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-
+#include <ao/ao.h>
+#include <mpg123.h>
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 using namespace std;
-
+#define BITS 8
 #define LASERRAYSPEED 10
 #define LASERGUNVELOCITY 6
 #define BUCKETSPEED 5
@@ -122,6 +123,59 @@ double new_mouse_pos_x, new_mouse_pos_y;
 float zoom_camera = 1;
 double mouse_pos_x, mouse_pos_y;
 int right_mouse_clicked=0;
+
+// for sound
+mpg123_handle *mh;
+unsigned char *buffer;
+size_t buffer_size;
+size_t done;
+int err;
+
+int driver;
+ao_device *dev;
+
+ao_sample_format format;
+int channels, encoding;
+long rate;
+
+void audio_init() {
+    /* initializations */
+    ao_initialize();
+    driver = ao_default_driver_id();
+    mpg123_init();
+    mh = mpg123_new(NULL, &err);
+    buffer_size = 3000;
+    buffer = (unsigned char*) malloc(buffer_size * sizeof(unsigned char));
+
+    /* open the file and get the decoding format */
+    mpg123_open(mh, "../safari.mp3");
+    mpg123_getformat(mh, &rate, &channels, &encoding);
+
+    /* set the output format and open the output device */
+    format.bits = mpg123_encsize(encoding) * BITS;
+    format.rate = rate;
+    format.channels = channels;
+    format.byte_format = AO_FMT_NATIVE;
+    format.matrix = 0;
+    dev = ao_open_live(driver, &format, NULL);
+}
+
+void audio_play() {
+    /* decode and play */
+    if (mpg123_read(mh, buffer, buffer_size, &done) == MPG123_OK)
+        ao_play(dev, (char*) buffer, done);
+    else mpg123_seek(mh, 0, SEEK_SET);
+}
+
+void audio_close() {
+    /* clean up */
+    //free(buffer);
+    ao_close(dev);
+    mpg123_close(mh);
+    mpg123_delete(mh);
+    mpg123_exit();
+    ao_shutdown();
+}
 
 GLuint programID;
 
@@ -916,6 +970,9 @@ void draw (GLFWwindow* window )
 			else
 					printf("A blue brick collided with bucket\n\n");
 			printf("GAME OVER. Your score is %d\n", score);
+
+			audio_close();
+
 			return;
 	}
 	// clear the color and depth in the frame buffer
@@ -1103,6 +1160,7 @@ int main (int argc, char** argv)
 	GLFWwindow* window = initGLFW(windowWidth, windowHeight);
 
 	initGL (window, windowWidth, windowHeight);
+	audio_init();
 
 	double last_update_time = glfwGetTime(), current_time;
 
@@ -1110,6 +1168,7 @@ int main (int argc, char** argv)
 	/* Draw in loop */
 	while (!glfwWindowShouldClose(window)) {
 
+		audio_play();
 		// OpenGL Draw commands
 		draw(window);
 
