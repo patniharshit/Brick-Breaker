@@ -14,7 +14,7 @@
 
 using namespace std;
 #define BITS 8
-#define LASERRAYSPEED 10
+#define LASERRAYSPEED 12
 #define LASERGUNVELOCITY 6
 #define BUCKETSPEED 5
 #define BRICKHEIGHT 40
@@ -148,7 +148,7 @@ void audio_init() {
     buffer = (unsigned char*) malloc(buffer_size * sizeof(unsigned char));
 
     /* open the file and get the decoding format */
-    mpg123_open(mh, "../ebit.mp3");
+    mpg123_open(mh, "ebit.mp3");
     mpg123_getformat(mh, &rate, &channels, &encoding);
 
     /* set the output format and open the output device */
@@ -165,6 +165,8 @@ void audio_play() {
     if (mpg123_read(mh, buffer, buffer_size, &done) == MPG123_OK)
         ao_play(dev, (char*) buffer, done);
     else mpg123_seek(mh, 0, SEEK_SET);
+		printf("audio play\n");
+
 }
 
 
