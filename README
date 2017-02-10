@@ -1,4 +1,8 @@
 ----------------------------------------------------------------
+BRICK BREAKER
+
+Made By- Harshit Patni
+----------------------------------------------------------------
 DEPENDENCIES
 ----------------------------------------------------------------
 Linux/Windows/ Mac OSX - Dependencies: (Recommended)
@@ -63,13 +67,29 @@ $./sample2D
 Similarly for mac
 
 ----------------------------------------------------------------
-DEMO CONTROLS
+RULES
 ----------------------------------------------------------------
-Keyboard:
- c - toggle cube rotation
- p - toggle pyramid rotation
- q - quit
+1. Targets randomly drop from the top of screen.
+2. Some mirrors are placed in the path where laser rays can be reflected as per laws of reflection.
+3. The player can control the angle and vertical position and firing of the canon and gets points for shooting the target (blue bricks) (+1 for each).
+4. Any mistargeting would cost negative points(-1 for each).
+5. Once you shoot a laser ray, the canon takes one second to recharge, and then only you can shoot again.
+6. On the bottom of the screen there are two baskets to collect color specific bricks. 
+7. Game is over if any of the black brick is collected in any of these two baskets.
+8. Game is also over if more than 20 red-green bricks are mistargeted.
+9. There is one special brick which when hit will award +5 points, also for next 15 seconds it makes laser non destroyable.
 
-Mouse:
- Left click - Change Pyramid rotation direction
- Right click - Change the vector about which Cube rotates
+----------------------------------------------------------------
+CONTROLS
+----------------------------------------------------------------
+Tilt Cannon Upward = d
+Tilt Cannon Downward = a
+Move Cannon Up = s
+Move Cannon Down = d
+Increase falling bricks speed = m
+Decrease falling bricks speed = n
+Move Red Bucket = ctrl + right, ctrl + left / Drag with mouse
+Move Green Bucket = alt + right, alt + left / Drag with mouse
+Shoot = space / LMB
+Zoom = up, down / mousescroll
+Panning = right, left / RMB
