@@ -1,9 +1,9 @@
-###BRICK BREAKER
+BRICK BREAKER
 ----------------
 
 Made By- Harshit Patni
 
-##RULES
+## RULES
 
 * Targets randomly drop from the top of screen.
 * Some mirrors are placed in the path where laser rays can be reflected as per laws of reflection.
@@ -16,17 +16,17 @@ Made By- Harshit Patni
 * There is one special brick which when hit will award +5 points, also for next 15 seconds it makes laser non destroyable.
 
 
-###Gameplay
+## Gameplay
 
 
-![Screenshot of Bloxorz](bloxorz.gif "Screenshot")
+![Screenshot of Brick-Breaker](shooter.gif "Screenshot")
 
 
 
 * (The quality of the gif had to be reduced to reduce its size)
 
 
-##CONTROLS
+## CONTROLS
 
 * Tilt Cannon Upward = d
 * Tilt Cannon Downward = a
